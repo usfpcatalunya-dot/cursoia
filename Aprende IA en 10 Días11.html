@@ -1,0 +1,1770 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+
+
+    <title>Aprende IA en 10 Días</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Vue.js 3 CDN -->
+    <script src="https://unpkg.com/vue@3.5.13/dist/vue.global.js"></script>
+    <!-- Google Fonts: Cairo (Arabic) & Inter (English/Spanish) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        arabic: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        dark: {
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                        },
+                        brand: {
+                            purple: '#8b5cf6',
+                            cyan: '#06b6d4',
+                            emerald: '#10b981',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [v-cloak] { display: none; }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0b0f19;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1f2937;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #8b5cf6;
+        }
+        .glow-hover:hover {
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+        }
+
+        /* ================================================================
+           3D DESIGN SYSTEM  ·  "Aprende IA en 10 Días"
+           Stage (depth) + Tilt (parallax cards) + Iso (extrusion)
+           ================================================================ */
+        :root {
+            --p3-purple: #8b5cf6;
+            --p3-cyan: #06b6d4;
+            --p3-emerald: #10b981;
+            --p3-tilt: 0deg;
+            --p3-tiltx: 0deg;
+            --p3-mx: 50%;
+            --p3-my: 50%;
+            --p3-py: 0px;
+            --p3-py2: 0px;
+            --p3-edge: 0 26px 60px -24px rgba(0, 0, 0, .9);
+        }
+        html { scroll-behavior: smooth; }
+        body {
+            background-image:
+                radial-gradient(1100px 700px at 15% -8%, rgba(139, 92, 246, .22), transparent 62%),
+                radial-gradient(900px 600px at 88% 8%, rgba(6, 182, 212, .16), transparent 60%),
+                radial-gradient(1000px 800px at 50% 110%, rgba(16, 185, 129, .10), transparent 65%);
+            background-attachment: fixed;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        #app { position: relative; z-index: 1; }
+
+        /* ---------- FIXED 3D STAGE ---------- */
+        .p3-stage {
+            position: fixed; inset: 0; z-index: 0; overflow: hidden;
+            perspective: 1000px; perspective-origin: 50% 32%;
+            pointer-events: none;
+        }
+        #p3-stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+        .p3-grid {
+            position: absolute; left: -60%; right: -60%; bottom: -20%; height: 80vh;
+            background-image:
+                linear-gradient(rgba(139, 92, 246, .42) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(6, 182, 212, .30) 1px, transparent 1px);
+            background-size: 70px 70px;
+            transform: rotateX(74deg);
+            transform-origin: 50% 100%;
+            -webkit-mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.5) 46%, transparent 93%);
+            mask-image: linear-gradient(to top, #000 0%, rgba(0,0,0,.5) 46%, transparent 93%);
+            animation: p3GridMove 9s linear infinite;
+        }
+        @keyframes p3GridMove { to { background-position: 0 70px, 70px 0; } }
+
+        .p3-orb {
+            position: absolute; border-radius: 50%; filter: blur(62px); opacity: .40;
+            animation: p3OrbFloat 19s ease-in-out infinite alternate;
+        }
+        .p3-orb.a { width: 44vw; height: 44vw; top: -14vw; left: -10vw;
+                     background: radial-gradient(circle, rgba(139,92,246,.9), transparent 68%); }
+        .p3-orb.b { width: 38vw; height: 38vw; bottom: -12vw; right: -8vw; animation-delay: -7s;
+                     background: radial-gradient(circle, rgba(6,182,212,.85), transparent 68%); }
+        .p3-orb.c { width: 26vw; height: 26vw; top: 44%; left: 60%; animation-delay: -13s; opacity: .20;
+                     background: radial-gradient(circle, rgba(16,185,129,.8), transparent 68%); }
+        @keyframes p3OrbFloat {
+            from { transform: translate3d(0, 0, 0) scale(1); }
+            to   { transform: translate3d(4vw, -5vh, 0) scale(1.18); }
+        }
+
+        /* --- floating wireframe cubes --- */
+        .p3-cube {
+            position: absolute; width: var(--s); height: var(--s);
+            transform-style: preserve-3d;
+            animation: p3CubeSpin 27s linear infinite;
+        }
+        .p3-cube span {
+            position: absolute; inset: 0; display: block;
+            border: 1px solid rgba(139, 92, 246, .34);
+            background: linear-gradient(140deg, rgba(139,92,246,.14), rgba(6,182,212,.05) 60%, transparent);
+            box-shadow: inset 0 0 34px rgba(139, 92, 246, .14);
+        }
+        .p3-cube span:nth-child(1) { transform: translateZ(calc(var(--s) / 2)); }
+        .p3-cube span:nth-child(2) { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
+        .p3-cube span:nth-child(3) { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
+        .p3-cube span:nth-child(4) { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
+        .p3-cube span:nth-child(5) { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); }
+        .p3-cube span:nth-child(6) { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
+        @keyframes p3CubeSpin {
+            from { transform: rotateX(-18deg) rotateY(0deg); }
+            to   { transform: rotateX(-18deg) rotateY(360deg); }
+        }
+        .p3-cube-wrap {
+            position: absolute; transform-style: preserve-3d;
+            animation: p3Drift 15s ease-in-out infinite alternate;
+        }
+        .p3-cube-wrap.b { animation-duration: 21s; animation-delay: -6s; }
+        .p3-cube-wrap.c { animation-duration: 18s; animation-delay: -11s; }
+        @keyframes p3Drift {
+            from { transform: translate3d(0, 0, -180px) rotateZ(0deg); }
+            to   { transform: translate3d(26px, -46px, -60px) rotateZ(14deg); }
+        }
+
+        /* ---------- 3D TILT CARDS (real extruded edges) ---------- */
+        .p3-card {
+            position: relative;
+            transform-style: preserve-3d;
+            transform: perspective(1150px) rotateX(var(--p3-tiltx)) rotateY(var(--p3-tilt));
+            transition: transform .38s cubic-bezier(.22, 1, .36, 1), box-shadow .38s ease, border-color .38s ease;
+            /* stacked hard shadows = visible extrusion on overflow-hidden cards too */
+            box-shadow:
+                0 1px 0 rgba(139, 92, 246, .16),
+                0 2px 0 rgba(6, 182, 212, .12),
+                0 3px 0 rgba(0, 0, 0, .45),
+                0 26px 60px -24px rgba(0, 0, 0, .9);
+        }
+        .p3-card::before {
+            content: ""; position: absolute; inset: 0; border-radius: inherit;
+            transform: translateZ(-20px); z-index: -1; pointer-events: none;
+            border: 1px solid rgba(139, 92, 246, .20);
+            background: linear-gradient(180deg, rgba(139, 92, 246, .12), rgba(6, 182, 212, .07));
+        }
+        .p3-card::after {
+            content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+            background: radial-gradient(460px circle at var(--p3-mx) var(--p3-my), rgba(255,255,255,.11), transparent 58%);
+            opacity: 0; transition: opacity .32s ease;
+        }
+        .p3-card:hover::after { opacity: 1; }
+        .p3-card:hover {
+            border-color: rgba(139, 92, 246, .48);
+            box-shadow:
+                0 1px 0 rgba(139, 92, 246, .30),
+                0 3px 0 rgba(6, 182, 212, .22),
+                0 5px 0 rgba(0, 0, 0, .5),
+                0 38px 76px -26px rgba(0, 0, 0, .95),
+                0 0 46px -12px rgba(139, 92, 246, .38);
+        }
+
+        /* ---------- ISOMETRIC EXTRUDED PANELS ---------- */
+        .p3-iso { position: relative; transform-style: preserve-3d; }
+        .p3-iso::before {
+            content: ""; position: absolute; inset: 0; border-radius: inherit;
+            transform: translate3d(12px, 12px, -30px); z-index: -1; pointer-events: none;
+            background: linear-gradient(135deg, rgba(139, 92, 246, .24), rgba(6, 182, 212, .14));
+            border: 1px solid rgba(139, 92, 246, .26);
+        }
+
+        /* ---------- HERO · AI CORE (orbital 3D object) ---------- */
+        .p3-hero { perspective: 1400px; }
+        .p3-core { position: relative; width: 176px; height: 176px; flex-shrink: 0; transform-style: preserve-3d; }
+        .p3-core .ball {
+            position: absolute; inset: 40px; border-radius: 50%;
+            background: radial-gradient(circle at 32% 26%, #ffffff, #ddd6fe 14%, #8b5cf6 44%, #06b6d4 76%, #0b0f19 100%);
+            box-shadow: 0 0 58px rgba(139, 92, 246, .68), 0 0 120px rgba(6, 182, 212, .38),
+                        inset -12px -16px 32px rgba(0, 0, 0, .55);
+            animation: p3Pulse 3.8s ease-in-out infinite;
+        }
+        @keyframes p3Pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.08); } }
+        .p3-core .ring {
+            position: absolute; inset: 0; border-radius: 50%;
+            border: 1px solid rgba(139, 92, 246, .48);
+            box-shadow: inset 0 0 22px rgba(139, 92, 246, .28), 0 0 18px rgba(139, 92, 246, .2);
+            transform-style: preserve-3d;
+        }
+        .p3-core .r1 { animation: p3Orbit1 9s linear infinite; }
+        .p3-core .r2 { inset: 17px; border-color: rgba(6, 182, 212, .46); animation: p3Orbit2 13s linear infinite; }
+        .p3-core .r3 { inset: 34px; border-color: rgba(16, 185, 129, .38); animation: p3Orbit3 17s linear infinite; }
+        .p3-core .node {
+            position: absolute; top: -5px; left: 50%; width: 10px; height: 10px; margin-left: -5px;
+            border-radius: 50%; background: #ede9fe;
+            box-shadow: 0 0 15px 3px rgba(139, 92, 246, .95);
+        }
+        .p3-core .r2 .node { width: 8px; height: 8px; margin-left: -4px; top: -4px;
+                             background: #cffafe; box-shadow: 0 0 14px 3px rgba(6, 182, 212, .95); }
+        .p3-core .r3 .node { width: 7px; height: 7px; margin-left: -3.5px; top: -3.5px;
+                             background: #d1fae5; box-shadow: 0 0 12px 3px rgba(16, 185, 129, .9); }
+        @keyframes p3Orbit1 { from { transform: rotateX(72deg) rotateZ(0deg); } to { transform: rotateX(72deg) rotateZ(360deg); } }
+        @keyframes p3Orbit2 { from { transform: rotateY(70deg) rotateX(12deg) rotateZ(0deg); } to { transform: rotateY(70deg) rotateX(12deg) rotateZ(360deg); } }
+        @keyframes p3Orbit3 { from { transform: rotateX(20deg) rotateY(30deg) rotateZ(0deg); } to { transform: rotateX(20deg) rotateY(30deg) rotateZ(360deg); } }
+
+        /* ---------- 3D TEXT / EXTRUDED HEADINGS ---------- */
+        .p3-text {
+            text-shadow: 0 1px 0 rgba(0, 0, 0, .55), 0 2px 0 rgba(139, 92, 246, .22),
+                         0 3px 0 rgba(6, 182, 212, .16), 0 16px 30px rgba(0, 0, 0, .6);
+        }
+
+        /* ---------- PROGRESS TUBE (cylindrical highlight) ---------- */
+        .p3-tube {
+            position: relative; background: #1f2937; height: 11px; border-radius: 999px; overflow: hidden;
+            box-shadow: inset 0 2px 6px rgba(0, 0, 0, .8), 0 0 0 1px rgba(255, 255, 255, .06);
+        }
+        .p3-tube > i {
+            position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px;
+            background: linear-gradient(90deg, #8b5cf6, #06b6d4);
+            box-shadow: 0 0 16px rgba(139, 92, 246, .75), inset 0 1px 0 rgba(255, 255, 255, .5);
+            transition: width .55s cubic-bezier(.22, 1, .36, 1);
+        }
+
+        /* ---------- SIDEBAR DAY CHIPS ---------- */
+        .p3-day { transform-style: preserve-3d; transition: transform .3s cubic-bezier(.22, 1, .36, 1), box-shadow .3s; }
+        .p3-day:hover { transform: perspective(800px) translateZ(14px) rotateX(4deg); box-shadow: 0 14px 30px -12px rgba(139, 92, 246, .55); }
+        .p3-day:active { transform: perspective(800px) translateZ(4px) scale(.985); }
+        .p3-day.is-active { box-shadow: 0 16px 34px -14px rgba(139, 92, 246, .8), inset 0 1px 0 rgba(255, 255, 255, .14); }
+
+        /* ---------- QUIZ OPTIONS ---------- */
+        .p3-opt { transform-style: preserve-3d; }
+        .p3-opt:hover { transform: perspective(900px) rotateX(6deg) translateY(-3px); box-shadow: 0 18px 36px -14px rgba(139, 92, 246, .6); }
+        .p3-opt.picked { transform: perspective(900px) rotateX(-4deg) translateY(-2px) scale(1.012); box-shadow: 0 20px 40px -14px rgba(139, 92, 246, .7); }
+
+        /* ---------- HOLO HEADER BAR ---------- */
+        .p3-topbar { box-shadow: 0 18px 50px -28px rgba(0, 0, 0, .95), 0 1px 0 rgba(139, 92, 246, .22); }
+
+        /* ---------- INNER DEPTH HELPERS ---------- */
+        .p3-lift { transform: translateZ(26px); transform-style: preserve-3d; }
+        .p3-depth-sm { border-radius: 1rem; }
+        .p3-depth-sm::before { transform: translateZ(-10px); }
+        .p3-depth-sm::after { opacity: 0; }
+
+        /* ---------- 3D MODAL ---------- */
+        .p3-modal {
+            transform-style: preserve-3d;
+            box-shadow:
+                0 2px 0 rgba(139, 92, 246, .28),
+                0 5px 0 rgba(6, 182, 212, .20),
+                0 7px 0 rgba(0, 0, 0, .5),
+                0 50px 110px -30px rgba(0, 0, 0, .95),
+                0 0 70px -18px rgba(139, 92, 246, .45);
+            animation: p3ModalIn .45s cubic-bezier(.22, 1, .36, 1) both;
+        }
+        @keyframes p3ModalIn {
+            from { transform: perspective(1200px) rotateX(14deg) translateY(28px) scale(.9); opacity: 0; }
+            to   { transform: perspective(1200px) rotateX(0deg) translateY(0) scale(1); opacity: 1; }
+        }
+        .p3-modal::before {
+            content: ""; position: absolute; inset: 0; border-radius: inherit;
+            transform: translate3d(14px, 14px, -40px); z-index: -1; pointer-events: none;
+            background: linear-gradient(135deg, rgba(139, 92, 246, .3), rgba(6, 182, 212, .18));
+            border: 1px solid rgba(139, 92, 246, .3);
+        }
+        body.p3-calm .p3-modal { animation: none; }
+        @media (prefers-reduced-motion: reduce) { .p3-modal { animation: none; } }
+
+        /* ---------- MOTION CALM MODE ---------- */
+        body.p3-calm .p3-grid,
+        body.p3-calm .p3-cube,
+        body.p3-calm .p3-cube-wrap,
+        body.p3-calm .p3-orb,
+        body.p3-calm .p3-core .ring,
+        body.p3-calm .p3-core .ball { animation: none !important; }
+        @media (prefers-reduced-motion: reduce) {
+            .p3-grid, .p3-cube, .p3-cube-wrap, .p3-orb, .p3-core .ring, .p3-core .ball { animation: none !important; }
+            .p3-card, .p3-day, .p3-opt, .p3-tube > i { transition: none !important; }
+        }
+
+        /* inline icon glyphs (no external icon stylesheet) */
+        :root { color-scheme: dark; }
+        body { background-color: #0b0f19; color: #f1f5f9; }
+        i[class*='fa-'] { font-style: normal; display: inline-block; line-height: 1; }
+        i.fa-brain::before { content: '✦'; }
+        i.fa-map-signs::before { content: '➤'; }
+        i.fa-circle-check::before { content: '✔'; }
+        i.fa-circle-xmark::before { content: '✖'; }
+        i.fa-calendar-day::before { content: '▣'; }
+        i.fa-square-check::before { content: '☑'; }
+        i.fa-wand-magic-sparkles::before { content: '✧'; }
+        i.fa-chevron-right::before { content: '›'; }
+        i.fa-cube::before { content: '◆'; }
+        i.fa-copy::before { content: '⧉'; }
+        i.fa-square-poll-vertical::before { content: '▤'; }
+        i.fa-arrow-left::before { content: '←'; }
+        i.fa-arrow-right::before { content: '→'; }
+        i.fa-xmark::before { content: '✕'; }
+        i.fa-play::before { content: '▶'; }
+        i.fa-eye::before { content: '◉'; }
+        i.fa-bolt::before { content: 'ϟ'; }
+        i.fa-regular.fa-circle::before { content: '○'; }
+        i.fa-regular.fa-square::before { content: '☐'; }
+        i.fa-regular.fa-copy::before { content: '⧉'; }
+    </style>
+
+<div class="bg-dark-900 text-slate-100 font-sans min-h-screen" id="p3-root">
+
+    <!-- ============ FIXED 3D STAGE : depth starfield · grid floor · wireframe cubes ============ -->
+    <div class="p3-stage" aria-hidden="true">
+        <canvas id="p3-stars"></canvas>
+        <div class="p3-grid"></div>
+        <div class="p3-orb a"></div>
+        <div class="p3-orb b"></div>
+        <div class="p3-orb c"></div>
+        <div class="p3-cube-wrap" style="top:9%; left:5%;">
+            <div class="p3-cube" style="--s:86px">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="p3-cube-wrap b" style="top:22%; right:7%;">
+            <div class="p3-cube" style="--s:58px; animation-duration:19s; animation-direction:reverse">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="p3-cube-wrap c" style="bottom:16%; left:12%;">
+            <div class="p3-cube" style="--s:42px; animation-duration:33s">
+                <span></span><span></span><span></span><span></span><span></span><span></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="app" v-cloak class="flex flex-col min-h-screen">
+        
+        <!-- TOP NAVIGATION BAR -->
+        <header class="sticky top-0 z-50 bg-dark-900/80 backdrop-blur-md border-b border-slate-800/80 px-4 py-3 p3-topbar">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3 p3-card p3-depth-sm" data-tilt>
+                    <div class="bg-gradient-to-r from-brand-purple to-brand-cyan p-2.5 rounded-xl shadow-lg shadow-brand-purple/20 p3-lift">
+                        <i class="fa-solid fa-brain text-xl text-white animate-pulse"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold bg-gradient-to-r from-brand-purple to-brand-cyan bg-clip-text text-transparent p3-text">
+                            APRENDE IA EN 10 DÍAS
+                        </h1>
+                        <p class="text-xs text-slate-400 font-arabic tracking-wider" dir="rtl">تعلَّم الذكاء الاصطناعي في ١٠ أيام</p>
+                    </div>
+                </div>
+
+                <!-- Global Progress and Controls -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- 3D Progress Bar -->
+                    <div class="flex items-center gap-2 bg-dark-800/90 px-3 py-1.5 rounded-full border border-slate-700 shadow-inner">
+                        <span class="text-xs font-semibold text-brand-cyan">Progreso:</span>
+                        <div class="w-24 p3-tube">
+                            <i :style="{ width: progressPercentage + '%' }"></i>
+                        </div>
+                        <span class="text-xs font-bold text-slate-300">{{ progressPercentage }}%</span>
+                    </div>
+
+                    <!-- Motion Toggle -->
+                    <button @click="p3Calm = !p3Calm"
+                            :title="p3Calm ? 'Activar movimiento 3D' : 'Reducir movimiento 3D'"
+                            class="w-9 h-9 flex items-center justify-center bg-dark-800 border border-slate-700 rounded-lg text-brand-cyan hover:border-brand-cyan transition-all">
+                        <i :class="p3Calm ? 'fa-solid fa-play' : 'fa-solid fa-eye'"></i>
+                    </button>
+
+                    <!-- Language Selector -->
+                    <div class="bg-dark-800/90 p-1 rounded-lg border border-slate-700 flex gap-1">
+                        <button @click="langMode = 'es'" 
+                                :class="langMode === 'es' ? 'bg-brand-purple text-white' : 'text-slate-400 hover:text-white'"
+                                class="text-xs px-2.5 py-1 rounded-md font-semibold transition-all">
+                            ES
+                        </button>
+                        <button @click="langMode = 'bilingual'" 
+                                :class="langMode === 'bilingual' ? 'bg-gradient-to-r from-brand-purple to-brand-cyan text-white' : 'text-slate-400 hover:text-white'"
+                                class="text-xs px-2.5 py-1 rounded-md font-semibold transition-all">
+                            BILINGÜE
+                        </button>
+                        <button @click="langMode = 'ar'" 
+                                :class="langMode === 'ar' ? 'bg-brand-cyan text-white' : 'text-slate-400 hover:text-white'"
+                                class="text-xs px-2.5 py-1 rounded-md font-semibold font-arabic transition-all">
+                            AR
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN HUB WORKSPACE -->
+        <div class="flex-1 max-w-7xl w-full mx-auto flex flex-col lg:flex-row gap-6 p-4">
+            
+            <!-- LEFT SIDEBAR: THE 10-DAY ROADMAP NAVIGATION -->
+            <aside class="w-full lg:w-80 shrink-0">
+                <div class="bg-dark-800/85 backdrop-blur-sm rounded-2xl border border-slate-800 p-4 sticky top-24 p3-iso">
+                    <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">
+                        <i class="fa-solid fa-map-signs mr-2 text-brand-purple"></i>Ruta de Aprendizaje / خريطة الطريق
+                    </h3>
+                    
+                    <div class="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
+                        <button v-for="day in days" :key="day.id"
+                                @click="activeDay = day.id; view = 'course'"
+                                :class="[
+                                    activeDay === day.id 
+                                    ? 'bg-gradient-to-r from-brand-purple/20 to-brand-cyan/10 border-brand-purple text-white' 
+                                    : 'border-transparent bg-slate-900/40 text-slate-400 hover:bg-slate-900/80 hover:text-slate-200'
+                                ]"
+                                :data-tilt="activeDay === day.id ? '' : null"
+                                class="w-full text-left p-3 rounded-xl border transition-all duration-200 flex items-center justify-between group p3-day"
+                                :class="activeDay === day.id ? 'is-active' : ''">
+                            
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-xs shrink-0 shadow-md"
+                                     :class="activeDay === day.id ? 'bg-brand-purple text-white' : 'bg-dark-700 text-slate-400'">
+                                    {{ day.id }}
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-xs truncate leading-snug">Día {{ day.id }}: {{ day.titleEs }}</h4>
+                                    <p class="font-arabic text-[10px] text-slate-500 truncate leading-none mt-1" dir="rtl">{{ day.titleAr }}</p>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-1.5 shrink-0 ml-2">
+                                <span v-if="completedDays.includes(day.id)" class="text-brand-emerald text-sm">
+                                    <i class="fa-solid fa-circle-check"></i>
+                                </span>
+                                <span v-else class="text-slate-600 text-xs group-hover:text-slate-400">
+                                    <i class="fa-regular fa-circle"></i>
+                                </span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Interactive Quick Tools Drawer -->
+                    <div class="mt-4 pt-4 border-t border-slate-700/50 space-y-2">
+                        <h4 class="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Herramientas Didácticas</h4>
+                        <button @click="view = 'glossary'" :class="view === 'glossary' ? 'border-brand-cyan bg-brand-cyan/10' : 'border-slate-700'" class="w-full flex items-center justify-between bg-slate-900 hover:bg-brand-cyan/10 border hover:border-brand-cyan p-2.5 rounded-xl transition-all group">
+                            <span class="text-xs font-semibold flex items-center gap-2"><i class="fa-solid fa-square-poll-vertical text-brand-cyan"></i> Glosario Bilingüe / قاموس</span>
+                            <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        <button @click="view = 'prompts'" :class="view === 'prompts' ? 'border-brand-purple bg-brand-purple/10' : 'border-slate-700'" class="w-full flex items-center justify-between bg-slate-900 hover:bg-brand-purple/20 border hover:border-brand-purple p-2.5 rounded-xl transition-all group">
+                            <span class="text-xs font-semibold flex items-center gap-2"><i class="fa-solid fa-bolt text-brand-purple"></i> 50 Prompts Premium / ٥٠ أمراً</span>
+                            <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        <button @click="showPromptBuilder = true" class="w-full flex items-center justify-between bg-slate-900 hover:bg-brand-purple/20 border border-slate-700 hover:border-brand-purple p-2.5 rounded-xl transition-all group">
+                            <span class="text-xs font-semibold flex items-center gap-2"><i class="fa-solid fa-wand-magic-sparkles text-brand-purple"></i> Generador de Prompts</span>
+                            <i class="fa-solid fa-chevron-right text-xs text-slate-500 group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- CENTRAL WORKSPACE: CONTENT VIEWER & INTERACTION -->
+            <main v-if="view === 'course'" class="flex-1 min-w-0 space-y-6">
+                
+                <!-- HERO HEADER FOR ACTIVE DAY -->
+                <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-dark-800 via-dark-800 to-brand-purple/10 border border-slate-800 p-6 md:p-8 p3-hero">
+                    <div class="absolute -right-16 -top-16 w-48 h-48 bg-brand-purple/10 rounded-full blur-3xl"></div>
+                    <div class="absolute -left-16 -bottom-16 w-48 h-48 bg-brand-cyan/10 rounded-full blur-3xl"></div>
+                    
+                    <div class="relative z-10 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+                        <div class="flex-1 min-w-0">
+                            <span class="inline-flex items-center gap-1.5 bg-brand-purple/20 border border-brand-purple/30 text-brand-purple text-xs font-bold px-3 py-1 rounded-full mb-3 uppercase tracking-wider">
+                                <i class="fa-solid fa-calendar-day"></i> Día / يوم {{ currentDay.id }}
+                            </span>
+                            <h2 v-if="langMode !== 'ar'" class="text-2xl md:text-3xl font-extrabold text-white leading-tight p3-text">
+                                {{ currentDay.titleEs }}
+                            </h2>
+                            <h2 v-if="langMode !== 'es'" class="text-2xl md:text-3xl font-extrabold text-brand-cyan font-arabic leading-tight mt-2 p3-text" dir="rtl">
+                                {{ currentDay.titleAr }}
+                            </h2>
+                        </div>
+
+                        <!-- 3D AI CORE -->
+                        <div class="p3-core" data-tilt aria-hidden="true">
+                            <div class="ring r1"><span class="node"></span></div>
+                            <div class="ring r2"><span class="node"></span></div>
+                            <div class="ring r3"><span class="node"></span></div>
+                            <div class="ball"></div>
+                        </div>
+                        
+                        <button @click="toggleDayCompleted(currentDay.id)" 
+                                :class="completedDays.includes(currentDay.id) ? 'bg-brand-emerald text-dark-900' : 'bg-slate-700 hover:bg-brand-purple text-white'"
+                                class="px-4 py-2.5 rounded-xl text-xs font-bold flex items-center gap-2 transition-all shadow-lg shrink-0">
+                            <i :class="completedDays.includes(currentDay.id) ? 'fa-solid fa-square-check' : 'fa-regular fa-square'"></i>
+                            {{ completedDays.includes(currentDay.id) ? 'Completado ✓' : 'Marcar como Leído' }}
+                        </button>
+                    </div>
+
+                    <!-- Dynamic Objective Display -->
+                    <div class="mt-6 p-4 rounded-xl bg-slate-900/60 border border-slate-700/50 flex flex-col gap-3">
+                        <div v-if="langMode !== 'ar'" class="flex gap-3">
+                            <span class="text-xl">🎯</span>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-brand-purple">Objetivo del Día</h4>
+                                <p class="text-sm text-slate-300 mt-0.5 leading-relaxed">{{ currentDay.objectiveEs }}</p>
+                            </div>
+                        </div>
+                        <div v-if="langMode !== 'es'" class="flex gap-3 justify-end text-right font-arabic" dir="rtl">
+                            <span class="text-xl">🎯</span>
+                            <div>
+                                <h4 class="text-xs font-bold uppercase tracking-wider text-brand-cyan">هدف اليوم</h4>
+                                <p class="text-sm text-slate-300 mt-0.5 leading-relaxed">{{ currentDay.objectiveAr }}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- DYNAMIC RENDERING OF CHAPTER SECTIONS -->
+                <div class="space-y-6">
+                    <div v-for="(section, idx) in currentDay.sections" :key="idx" 
+                         class="bg-dark-800/85 backdrop-blur-sm rounded-2xl border border-slate-800 overflow-hidden p3-card"
+                         data-tilt>
+                        
+                        <!-- Section Header -->
+                        <div class="px-5 py-4 bg-gradient-to-r from-slate-800/80 to-slate-800/40 border-b border-slate-700/50 flex flex-col md:flex-row justify-between gap-2">
+                            <h3 v-if="langMode !== 'ar'" class="text-base font-bold text-white flex items-center gap-2 p3-text">
+                                <span class="text-brand-purple p3-lift"><i class="fa-solid fa-cube"></i></span>
+                                {{ section.titleEs }}
+                            </h3>
+                            <h3 v-if="langMode !== 'es'" class="text-base font-bold text-brand-cyan font-arabic text-right flex items-center justify-end gap-2 p3-text" dir="rtl">
+                                {{ section.titleAr }}
+                                <span class="text-brand-cyan p3-lift"><i class="fa-solid fa-cube"></i></span>
+                            </h3>
+                        </div>
+
+                        <!-- Section Body with Language Display Handling -->
+                        <div class="p-6 space-y-6">
+                            
+                            <!-- GRID VIEW: SIDE-BY-SIDE OR INDIVIDUAL -->
+                            <div class="grid gap-6" :class="langMode === 'bilingual' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'">
+                                
+                                <!-- Spanish Panel -->
+                                <div v-if="langMode !== 'ar'" class="space-y-4">
+                                    <div class="prose prose-invert max-w-none text-slate-300 text-sm leading-relaxed" v-html="section.bodyEs"></div>
+                                </div>
+
+                                <!-- Arabic Panel -->
+                                <div v-if="langMode !== 'es'" class="space-y-4 text-right font-arabic" dir="rtl">
+                                    <div class="prose prose-invert max-w-none text-slate-300 text-sm leading-relaxed" v-html="section.bodyAr"></div>
+                                </div>
+                            </div>
+
+                            <!-- INTERACTIVE COMPARISON (For Before vs After) -->
+                            <div v-if="section.compare" class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 space-y-4 p3-iso">
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="border border-red-500/20 bg-red-950/10 p-4 rounded-lg">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-xs font-bold text-red-400 uppercase tracking-widest">❌ Antes / قبل</span>
+                                            <button @click="copyText(section.compare.before)" class="text-xs text-slate-500 hover:text-white"><i class="fa-regular fa-copy"></i></button>
+                                        </div>
+                                        <p class="text-xs text-slate-400 italic font-mono">{{ section.compare.before }}</p>
+                                    </div>
+                                    <div class="border border-brand-emerald/20 bg-brand-emerald/10 p-4 rounded-lg p3-lift">
+                                        <div class="flex justify-between items-center mb-2">
+                                            <span class="text-xs font-bold text-brand-emerald uppercase tracking-widest">✅ Después / بعد</span>
+                                            <button @click="copyText(section.compare.after)" class="text-xs text-brand-emerald hover:text-white"><i class="fa-regular fa-copy"></i></button>
+                                        </div>
+                                        <p class="text-xs text-slate-300 font-medium font-mono bg-dark-900/60 p-2 rounded border border-slate-800">{{ section.compare.after }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- CODE & PROMPT VIEWER CARD -->
+                            <div v-if="section.prompts && section.prompts.length > 0" class="space-y-4">
+                                <div v-for="(p, pIdx) in section.prompts" :key="pIdx" 
+                                     class="bg-dark-900/80 rounded-xl border border-brand-purple/20 p-4 relative group p3-card" data-tilt>
+                                    <div class="absolute right-3 top-3 z-10 flex gap-2">
+                                        <button @click="copyText(p.content)" 
+                                                class="bg-slate-800 hover:bg-brand-purple text-slate-300 hover:text-white p-2 rounded-lg text-xs transition-all flex items-center gap-1.5 shadow-md">
+                                            <i class="fa-regular fa-copy"></i> Copy / نسخ
+                                        </button>
+                                    </div>
+                                    <span class="inline-block text-[10px] font-bold uppercase tracking-widest bg-brand-purple/30 text-brand-purple px-2 py-0.5 rounded mb-2">
+                                        Prompt / أمر الذكاء الاصطناعي
+                                    </span>
+                                    <div class="font-mono text-xs text-slate-300 bg-dark-900 p-3 rounded-lg border border-slate-800 overflow-x-auto whitespace-pre-wrap max-h-64 leading-relaxed">
+                                        {{ p.content }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- EXTRA TABLES/METRICS -->
+                            <div v-if="section.table" class="overflow-x-auto rounded-xl border border-slate-700/50">
+                                <table class="w-full text-left border-collapse text-xs">
+                                    <thead>
+                                        <tr class="bg-slate-700/50 text-slate-200">
+                                            <th v-for="h in section.table.headers" :key="h" class="p-3 font-semibold">{{ h }}</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-slate-800 bg-slate-900/20">
+                                        <tr v-for="(row, rIdx) in section.table.rows" :key="rIdx" class="hover:bg-slate-800/30">
+                                            <td v-for="cell in row" :key="cell" class="p-3 text-slate-300" v-html="cell"></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DAFY CHALLENGE HERO PANEL -->
+                <section class="bg-gradient-to-r from-brand-purple/10 to-brand-cyan/10 border border-brand-purple/20 rounded-3xl p-6 md:p-8 space-y-6 p3-iso" data-tilt>
+                    <div class="flex items-center gap-3">
+                        <span class="text-3xl animate-bounce p3-lift">🚀</span>
+                        <div>
+                            <h3 class="text-xl font-extrabold text-white p3-text">Reto del Día / تحدي اليوم</h3>
+                            <p class="text-xs text-brand-cyan font-bold tracking-widest uppercase">¡Pon a prueba tus nuevos conocimientos!</p>
+                        </div>
+                    </div>
+
+                    <div class="grid gap-6" :class="langMode === 'bilingual' ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1'">
+                        <div v-if="langMode !== 'ar'" class="space-y-2">
+                            <h4 class="text-xs font-bold text-brand-purple uppercase">🇪🇸 Versión Española</h4>
+                            <p class="text-sm text-slate-300 leading-relaxed">{{ currentDay.challengeEs }}</p>
+                        </div>
+                        <div v-if="langMode !== 'es'" class="space-y-2 text-right font-arabic" dir="rtl">
+                            <h4 class="text-xs font-bold text-brand-cyan uppercase">🇸🇦 النسخة العربية</h4>
+                            <p class="text-sm text-slate-300 leading-relaxed">{{ currentDay.challengeAr }}</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GAMIFIED ASSESSMENT: KNOWLEDGE QUIZ -->
+                <section class="bg-dark-800/85 backdrop-blur-sm border border-slate-800 rounded-3xl p-6 md:p-8 space-y-6 p3-card" data-tilt>
+                    <div class="flex items-center gap-3 border-b border-slate-700/50 pb-4">
+                        <div class="w-10 h-10 rounded-xl bg-brand-cyan/20 flex items-center justify-center text-brand-cyan text-lg p3-lift">
+                            <i class="fa-solid fa-square-poll-vertical"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-bold text-white p3-text">Prueba de Autoevaluación / اختبار المعرفة</h3>
+                            <p class="text-xs text-slate-400">Verifica que has asimilado bien las ideas clave</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-semibold text-slate-200">
+                            {{ currentDay.quiz.question }}
+                        </h4>
+                        
+                        <div class="grid grid-cols-1 gap-3">
+                            <button v-for="(opt, oIdx) in currentDay.quiz.options" :key="oIdx"
+                                    @click="selectAnswer(oIdx)"
+                                    :class="[
+                                        quizSubmitted 
+                                        ? oIdx === currentDay.quiz.correct 
+                                            ? 'bg-brand-emerald/20 border-brand-emerald text-brand-emerald'
+                                            : selectedAnswer === oIdx 
+                                                ? 'bg-red-500/20 border-red-500 text-red-500' 
+                                                : 'bg-slate-900/40 border-slate-800 text-slate-400'
+                                        : selectedAnswer === oIdx 
+                                            ? 'bg-brand-purple/20 border-brand-purple text-white' 
+                                            : 'bg-slate-900 hover:bg-slate-800/80 border-slate-800 text-slate-300'
+                                    ]"
+                                    class="w-full text-left p-4 rounded-xl border text-xs font-medium transition-all flex items-center justify-between p3-opt"
+                                    :class="selectedAnswer === oIdx ? 'picked' : ''">
+                                <span>{{ opt }}</span>
+                                <i v-if="quizSubmitted && oIdx === currentDay.quiz.correct" class="fa-solid fa-circle-check text-brand-emerald"></i>
+                                <i v-if="quizSubmitted && selectedAnswer === oIdx && oIdx !== currentDay.quiz.correct" class="fa-solid fa-circle-xmark text-red-500"></i>
+                            </button>
+                        </div>
+
+                        <div class="flex justify-between items-center pt-2">
+                            <p v-if="quizSubmitted" class="text-xs text-slate-300 font-semibold italic">
+                                {{ quizFeedback }}
+                            </p>
+                            <div v-else></div>
+                            
+                            <button @click="submitQuiz" 
+                                    :disabled="selectedAnswer === null || quizSubmitted"
+                                    class="bg-brand-purple hover:bg-brand-purple/90 disabled:bg-slate-700 disabled:opacity-50 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-all shadow-md">
+                                Enviar Respuesta
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- QUICK NAVIGATION BAR (NEXT/PREV DAY) -->
+                <nav class="flex justify-between items-center bg-slate-900/80 p-4 rounded-2xl border border-slate-800 p3-iso">
+                    <button @click="goToDay(activeDay - 1)" :disabled="activeDay === 1"
+                            class="px-4 py-2 bg-dark-800 hover:bg-brand-purple/20 disabled:opacity-40 disabled:hover:bg-dark-800 border border-slate-700 rounded-xl text-xs font-semibold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i> Anterior / السابق
+                    </button>
+                    <button @click="goToDay(activeDay + 1)" :disabled="activeDay === days.length"
+                            class="px-4 py-2 bg-brand-purple hover:bg-brand-purple/90 disabled:opacity-40 disabled:hover:bg-brand-purple border border-brand-purple/40 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                        Siguiente / التالي <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </nav>
+
+            </main>
+
+            <!-- GLOSSARY VIEW -->
+            <main v-else-if="view === 'glossary'" class="flex-1 min-w-0 space-y-6">
+                <section class="rounded-3xl bg-gradient-to-br from-dark-800 via-dark-800 to-brand-cyan/10 border border-slate-800 p-6 md:p-8 space-y-4">
+                    <button @click="view = 'course'" class="text-xs text-slate-400 hover:text-white flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> Volver al curso / العودة إلى الدورة</button>
+                    <div>
+                        <h2 v-if="langMode !== 'ar'" class="text-2xl md:text-3xl font-extrabold text-white p3-text">Glosario Bilingüe</h2>
+                        <h2 v-if="langMode !== 'es'" class="text-2xl md:text-3xl font-extrabold text-brand-cyan font-arabic mt-2 p3-text" dir="rtl">قاموس ثنائي اللغة</h2>
+                    </div>
+                    <label for="gloss-search" class="sr-only">Buscar en el glosario</label>
+                    <input id="gloss-search" type="text" v-model="glossQuery" placeholder="Buscar término / ابحث عن مصطلح"
+                           class="w-full bg-slate-900 border border-slate-700 focus:border-brand-cyan focus:ring-1 focus:ring-brand-cyan rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none">
+                    <p class="text-xs text-slate-400">{{ filteredGlossary.length }} de {{ glossary.length }} términos / مصطلحاً</p>
+                </section>
+                <div class="grid gap-4 md:grid-cols-2">
+                    <article v-for="g in filteredGlossary" :key="g.es" class="bg-dark-800/85 rounded-2xl border border-slate-800 p-5 space-y-3 min-w-0">
+                        <div v-if="langMode !== 'ar'" class="space-y-1">
+                            <h3 class="text-sm font-bold text-white">{{ g.es }}</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">{{ g.defEs }}</p>
+                        </div>
+                        <div v-if="langMode !== 'es'" class="space-y-1 text-right font-arabic" dir="rtl" :class="langMode === 'bilingual' ? 'border-t border-slate-700/50 pt-3' : ''">
+                            <h3 class="text-sm font-bold text-brand-cyan">{{ g.ar }}</h3>
+                            <p class="text-xs text-slate-300 leading-relaxed">{{ g.defAr }}</p>
+                        </div>
+                    </article>
+                </div>
+                <p v-if="filteredGlossary.length === 0" class="text-sm text-slate-400 text-center py-10">Sin resultados. Prueba con otra palabra. / لا توجد نتائج.</p>
+            </main>
+
+            <!-- PROMPT LIBRARY VIEW -->
+            <main v-else class="flex-1 min-w-0 space-y-6">
+                <section class="rounded-3xl bg-gradient-to-br from-dark-800 via-dark-800 to-brand-purple/10 border border-slate-800 p-6 md:p-8 space-y-4">
+                    <button @click="view = 'course'" class="text-xs text-slate-400 hover:text-white flex items-center gap-2"><i class="fa-solid fa-arrow-left"></i> Volver al curso / العودة إلى الدورة</button>
+                    <div>
+                        <h2 v-if="langMode !== 'ar'" class="text-2xl md:text-3xl font-extrabold text-white p3-text">50 Prompts Premium</h2>
+                        <h2 v-if="langMode !== 'es'" class="text-2xl md:text-3xl font-extrabold text-brand-cyan font-arabic mt-2 p3-text" dir="rtl">٥٠ أمراً استثنائياً</h2>
+                    </div>
+                    <p class="text-xs text-slate-400">Sustituye los datos entre [CORCHETES] por los tuyos y copia el prompt. / استبدل ما بين [الأقواس] ببياناتك ثم انسخ الأمر.</p>
+                    <label for="prompt-search" class="sr-only">Buscar prompts</label>
+                    <input id="prompt-search" type="text" v-model="promptQuery" placeholder="Buscar prompt / ابحث عن أمر"
+                           class="w-full bg-slate-900 border border-slate-700 focus:border-brand-purple focus:ring-1 focus:ring-brand-purple rounded-xl px-4 py-2.5 text-sm text-slate-200 outline-none">
+                    <div class="flex flex-wrap gap-2">
+                        <button @click="promptCat = 'all'" :class="promptCat === 'all' ? 'bg-brand-purple text-white border-brand-purple' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'" class="text-xs font-semibold px-3 py-1.5 rounded-full border transition-all">Todos / الكل</button>
+                        <button v-for="c in promptCats" :key="c.id" @click="promptCat = c.id"
+                                :class="promptCat === c.id ? 'bg-brand-purple text-white border-brand-purple' : 'bg-slate-900 text-slate-400 border-slate-700 hover:text-white'"
+                                class="text-xs font-semibold px-3 py-1.5 rounded-full border transition-all">{{ c.es }} / {{ c.ar }}</button>
+                    </div>
+                    <p class="text-xs text-slate-400">{{ filteredPrompts.length }} de {{ promptLibrary.length }} prompts</p>
+                </section>
+                <div class="grid gap-4 lg:grid-cols-2">
+                    <article v-for="x in filteredPrompts" :key="x.es" class="bg-dark-800/85 rounded-2xl border border-slate-800 p-5 space-y-3 min-w-0">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <span class="inline-block text-[10px] font-bold uppercase tracking-widest bg-brand-purple/30 text-brand-purple px-2 py-0.5 rounded mb-2">{{ catName(x.cat).es }} / {{ catName(x.cat).ar }}</span>
+                                <h3 v-if="langMode !== 'ar'" class="text-sm font-bold text-white">{{ x.es }}</h3>
+                                <h3 v-if="langMode !== 'es'" class="text-sm font-bold text-brand-cyan font-arabic" :class="langMode === 'ar' ? '' : 'mt-0.5'" dir="rtl">{{ x.ar }}</h3>
+                            </div>
+                            <button @click="copyText(x.content)" class="shrink-0 bg-slate-800 hover:bg-brand-purple text-slate-300 hover:text-white p-2 rounded-lg text-xs transition-all flex items-center gap-1.5">
+                                <i class="fa-regular fa-copy"></i> Copy / نسخ
+                            </button>
+                        </div>
+                        <div class="font-mono text-xs text-slate-300 bg-dark-900 p-3 rounded-lg border border-slate-800 whitespace-pre-wrap leading-relaxed" dir="auto">{{ x.content }}</div>
+                    </article>
+                </div>
+                <p v-if="filteredPrompts.length === 0" class="text-sm text-slate-400 text-center py-10">Sin resultados. / لا توجد نتائج.</p>
+            </main>
+        </div>
+
+        <!-- MODAL: INTERACTIVE PROMPT BUILDER -->
+        <transition enter-active-class="transition duration-200 ease-out"
+                    enter-from-class="opacity-0 scale-95"
+                    enter-to-class="opacity-100 scale-100"
+                    leave-active-class="transition duration-150 ease-in"
+                    leave-from-class="opacity-100 scale-100"
+                    leave-to-class="opacity-0 scale-95">
+            <div v-if="showPromptBuilder" class="fixed inset-0 z-50 overflow-y-auto bg-dark-900/80 backdrop-blur-md flex items-center justify-center p-4">
+                <div class="bg-dark-800 border border-slate-700 w-full max-w-4xl rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh] p3-modal">
+                    <!-- Header -->
+                    <div class="px-6 py-4 bg-gradient-to-r from-brand-purple/20 to-slate-800 border-b border-slate-700/80 flex justify-between items-center">
+                        <div>
+                            <h3 class="text-lg font-extrabold text-white p3-text">🪄 Generador Inteligente de Prompts</h3>
+                            <p class="text-xs text-slate-400">Construye prompts premium usando la Fórmula Maestra de los 5 Elementos</p>
+                        </div>
+                        <button @click="showPromptBuilder = false" class="text-slate-400 hover:text-white bg-slate-900 p-2 rounded-full border border-slate-800">
+                            <i class="fa-solid fa-xmark text-sm"></i>
+                        </button>
+                    </div>
+
+                    <!-- Builder Body -->
+                    <div class="p-6 overflow-y-auto space-y-6 flex-1 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Inputs Panel -->
+                        <div class="space-y-4">
+                            <h4 class="text-xs font-bold text-brand-purple uppercase tracking-wider">Paso 1: Configura tus Variables</h4>
+                            
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-1">1. Rol (¿Quién es la IA?)</label>
+                                    <input type="text" v-model="builder.rol" placeholder="Ej: Nutricionista deportivo con 15 años de experiencia" 
+                                           class="w-full bg-slate-900 border border-slate-700 focus:border-brand-purple focus:ring-1 focus:ring-brand-purple rounded-xl px-3 py-2 text-xs text-slate-200 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-1">2. Contexto (¿Cuál es tu situación?)</label>
+                                    <textarea v-model="builder.contexto" placeholder="Ej: Soy un hombre de 35 años, peso 80kg, entreno 4 veces por semana" rows="2"
+                                              class="w-full bg-slate-900 border border-slate-700 focus:border-brand-purple focus:ring-1 focus:ring-brand-purple rounded-xl px-3 py-2 text-xs text-slate-200 outline-none transition-all"></textarea>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-1">3. Tarea (¿Qué necesitas que haga?)</label>
+                                    <input type="text" v-model="builder.tarea" placeholder="Ej: Diseña un plan de comidas semanal para ganar músculo" 
+                                           class="w-full bg-slate-900 border border-slate-700 focus:border-brand-purple focus:ring-1 focus:ring-brand-purple rounded-xl px-3 py-2 text-xs text-slate-200 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-1">4. Formato (¿Cómo quieres el resultado?)</label>
+                                    <input type="text" v-model="builder.formato" placeholder="Ej: Preséntalo en una tabla con columnas: Día, Comida, Proteínas" 
+                                           class="w-full bg-slate-900 border border-slate-700 focus:border-brand-purple focus:ring-1 focus:ring-brand-purple rounded-xl px-3 py-2 text-xs text-slate-200 outline-none transition-all">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-300 mb-1">5. Restricciones (¿Qué debe evitar?)</label>
+                                    <input type="text" v-model="builder.restricciones" placeholder="Ej: Sin gluten, presupuesto de 50€" 
+                                           class="w-full bg-slate-900 border border-slate-700 focus:border-brand-purple focus:ring-1 focus:ring-brand-purple rounded-xl px-3 py-2 text-xs text-slate-200 outline-none transition-all">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Compiled Result Output -->
+                        <div class="flex flex-col justify-between bg-slate-900 p-5 rounded-2xl border border-slate-800 space-y-4">
+                            <div class="space-y-2">
+                                <span class="inline-block text-[10px] font-bold bg-brand-cyan/20 text-brand-cyan px-2.5 py-1 rounded-full uppercase">
+                                    Resultado en Tiempo Real
+                                </span>
+                                <h4 class="text-sm font-bold text-white">Tu Prompt de Élite Construido:</h4>
+                                <div class="bg-dark-900 p-4 rounded-xl border border-slate-800 font-mono text-xs leading-relaxed text-slate-300 whitespace-pre-wrap select-all min-h-[180px] max-h-[300px] overflow-y-auto">
+                                    {{ compiledPrompt }}
+                                </div>
+                            </div>
+
+                            <button @click="copyText(compiledPrompt)" class="w-full bg-gradient-to-r from-brand-purple to-brand-cyan text-white font-bold text-xs p-3 rounded-xl shadow-lg flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-copy"></i> Copiar Prompt Construido
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </transition>
+
+        <!-- FOOTER -->
+        <footer class="bg-dark-900 border-t border-slate-800 py-6 px-4 text-center text-slate-500 text-xs">
+            <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                <p>© Ebook Bilingüe ES / AR - Desarrollado para el Éxito Educativo de tus Alumnos.</p>
+                <div class="flex items-center gap-3">
+                    <span class="text-xs text-brand-cyan"><i class="fa-solid fa-bolt"></i> Diseñado con fines didácticos</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- MAIN JAVASCRIPT: VUE 3 CONTROLLER -->
+    <script>
+        const { createApp, ref, computed, watch, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                // Persistent State & Progress Data
+                const activeDay = ref(1);
+                const langMode = ref('bilingual'); // 'es', 'ar', 'bilingual'
+                const completedDays = ref([]);
+                const showPromptBuilder = ref(false);
+                const p3Calm = ref(false); // reduced 3D motion
+                const view = ref('course'); // 'course' | 'glossary' | 'prompts'
+                const glossQuery = ref('');
+                const promptQuery = ref('');
+                const promptCat = ref('all');
+
+                // Prompt Builder reactive attributes
+                const builder = ref({
+                    rol: '',
+                    contexto: '',
+                    tarea: '',
+                    formato: '',
+                    restricciones: ''
+                });
+
+                // Assessment State
+                const selectedAnswer = ref(null);
+                const quizSubmitted = ref(false);
+
+                // --- DATA STRUCTURE (10 DAYS COMPREHENSIVE CURRICULUM) ---
+                const days = ref([
+                    {
+                        id: 1,
+                        titleEs: "Desmitificando la IA",
+                        titleAr: "فك شفرة الذكاء الاصطناعي",
+                        objectiveEs: "Dejar de ver la IA como 'magia' o una amenaza, y entenderla como un motor de probabilidad y razonamiento lógico.",
+                        objectiveAr: "التوقف عن رؤية الذكاء الاصطناعي كـ 'سحر' أو تهديد، والبدء في فهمه على حقيقته: محرك يعتمد على الاحتمالات والاستدلال.",
+                        challengeEs: "Abre ChatGPT o Claude y copia este prompt exacto: 'Actúa como un experto en simplificación de conceptos. Explica qué es la inflación como si yo tuviera 5 años.' Observa cómo cambia la estructura de su tono.",
+                        challengeAr: "افتح ChatGPT أو Claude وانسخ هذا الأمر حرفياً: 'تصرف كخبير في تبسيط المفاهيم. اشرح لي التضخم كما لو كنت أبلغ من العمر 5 سنوات.' لاحظ كيف يغير الذكاء الاصطناعي نبرته وهيكله.",
+                        quiz: {
+                            question: "¿Cuál es la función principal y fundamental de un Modelo de Lenguaje Grande (LLM)?",
+                            options: [
+                                "Sentir emociones y pensar de forma creativa como un humano.",
+                                "Predecir el siguiente token (palabra/caracter) más probable en base a sus datos de entrenamiento.",
+                                "Servir exclusivamente como un buscador rápido de enlaces en Google."
+                            ],
+                            correct: 1,
+                            feedbackEs: "¡Exacto! Los LLM son avanzados motores predictivos basados en estadística computacional.",
+                            feedbackAr: "بالظبط! النماذج اللغوية الكبيرة هي محركات تنبؤية متقدمة تعتمد على الإحصاء الحسابي."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: ¿Qué es realmente un LLM?",
+                                titleAr: "القسم الأول: ما هو النموذج اللغوي الكبير (LLM) حقاً؟",
+                                bodyEs: `<p class='mb-2'>Un Modelo de Lenguaje Grande (LLM) <strong>no "piensa" ni "siente"</strong>. Imagina el autocompletar de tu teléfono, pero entrenado con casi todo el texto público de internet. Su función principal es predecir la siguiente palabra más probable en una secuencia.</p><p>El 80% de la gente le habla a la IA como si fuera Google. El 20% de élite le habla como si fuera un <strong>pasante brillante</strong> al que hay que darle contexto claro.</p>`,
+                                bodyAr: `<p class='mb-2'>النموذج اللغوي الكبير (LLM) لا "يفكر" ولا "يشعر" بالمعنى البشري. تخيل ميزة "الإكمال التلقائي" في هاتفك، لكنها تدربت على كل النصوص العامة المتاحة على الإنترنت.</p><p>80% من الناس يتحدثون إلى الذكاء الاصطناعي كما لو كان محرك بحث مثل جوجل. أما نخبة الـ 20% فيتحدثون إليه كما لو كان مساعداً ذكياً يحتاج إلى سياق وتوجيه واضح.</p>`,
+                            },
+                            {
+                                titleEs: "Sección 2: Los 4 Grandes y Cuándo Usarlos",
+                                titleAr: "القسم الثاني: النماذج الأربعة الكبرى ومتى تستخدمها",
+                                bodyEs: `<p>No todos los modelos son iguales. Usar el correcto te ahorra horas de trabajo:</p>`,
+                                bodyAr: `<p>ليست كل النماذج متشابهة. استخدام النموذج الصحيح يوفر عليك ساعات من العمل:</p>`,
+                                table: {
+                                    headers: ["Herramienta / الأداة", "Especialidad / التخصص", "Cuándo Usar / متى تستخدمه"],
+                                    rows: [
+                                        ["<strong>ChatGPT</strong>", "Razonamiento general y versatilidad lógica", "Lluvia de ideas, programación e interacción general."],
+                                        ["<strong>Claude</strong>", "Análisis profundo y redacción humana natural", "Lectura de PDFs largos, redacción narrativa y tono profesional."],
+                                        ["<strong>Gemini</strong>", "Ecosistema Google y velocidad de integración", "Análisis multimedia (video/fotos) e integración con Docs/Drive."],
+                                        ["<strong>Perplexity AI</strong>", "Investigación académica y factual en tiempo real", "Búsquedas profesionales con cero alucinaciones y fuentes citadas."]
+                                    ]
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        id: 2,
+                        titleEs: "El Arte del Prompting",
+                        titleAr: "فن هندسة الأوامر",
+                        objectiveEs: "Aprender a estructurar instrucciones que maximicen el rendimiento y la precisión de la IA en un 95% de los casos.",
+                        objectiveAr: "تعلم كتابة الأوامر (Prompts) التي تنتج نتائج استثنائية بنسبة 95% من المرات.",
+                        challengeEs: "Elige una tarea real (ej. un correo electrónico de ventas) y estructúrala usando la Fórmula Maestra de los 5 elementos. Compara el resultado con un prompt simple.",
+                        challengeAr: "اختر مهمة حقيقية (مثال: بريد مبيعات) وقم بصياغتها باستخدام المعادلة السحرية ذات الـ 5 عناصر. قارن النتيجة مع أمر بسيط.",
+                        quiz: {
+                            question: "¿Cuáles son los 5 elementos de la Fórmula Maestra de Prompting?",
+                            options: [
+                                "Idea, URL, Comando, Longitud y Tono.",
+                                "Rol, Contexto, Tarea, Formato y Restricciones.",
+                                "Búsqueda, Copia, Pegado, Edición y Guardado."
+                            ],
+                            correct: 1,
+                            feedbackEs: "¡Correcto! Cumplir estos 5 pilares elimina la ambigüedad en las respuestas de la IA.",
+                            feedbackAr: "صحيح! تطبيق هذه الأركان الخمسة يزيل الغموض في ردود الذكاء الاصطناعي."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: La Fórmula Maestra de 5 Elementos",
+                                titleAr: "القسم الأول: المعادلة السحرية ذات الخمسة عناصر",
+                                bodyEs: `<p>La precisión de la respuesta depende directamente de los componentes de entrada. Si dejas de darle instrucciones simples y aplicas esta matriz, notarás la diferencia instantáneamente.</p>`,
+                                bodyAr: `<p>دقة الإجابة تعتمد مباشرة على مدخلاتك. إذا توقفت عن إعطائه تعليمات بسيطة وطبقت هذه المعادلة، ستلاحظ الفرق فوراً.</p>`,
+                                table: {
+                                    headers: ["Componente / المكون", "Propósito / الغرض", "Ejemplo Práctico / مثال عملي"],
+                                    rows: [
+                                        ["<strong>Rol</strong>", "Define la personalidad y experiencia de la IA", "'Actúa como un redactor publicitario senior con 10 años de experiencia'"],
+                                        ["<strong>Contexto</strong>", "Delimita la situación y el público objetivo", "'Trabajo para una marca de ropa ecológica enfocada en millenials'"],
+                                        ["<strong>Tarea</strong>", "La acción específica que debe ejecutar", "'Escribe 3 propuestas de copy para anuncios de Instagram'"],
+                                        ["<strong>Formato</strong>", "El estilo visual de entrega", "'Entrégalo en formato de tabla con columnas: Gancho, Cuerpo, CTA'"],
+                                        ["<strong>Restricciones</strong>", "Límites claros para acotar el output", "'No uses emojis, evita la jerga comercial agresiva y máximo 100 palabras'"]
+                                    ]
+                                }
+                            },
+                            {
+                                titleEs: "Sección 2: Ejemplos de Antes vs Después",
+                                titleAr: "القسم الثاني: أمثلة قبل وبعد",
+                                bodyEs: `<p>Aquí tienes comparaciones reales de cómo cambian los resultados según la elaboración del prompt:</p>`,
+                                bodyAr: `<p>إليك مقارنات حقيقية توضح كيف تختلف النتائج بناءً على صياغة الأمر:</p>`,
+                                compare: {
+                                    before: "Escribe un correo vendiendo mi software de gestión de tiempo.",
+                                    after: "Actúa como un experto en ventas B2B. Vendo un software que ahorra 2 horas diarias de tareas administrativas para directores de PYMES. Redacta un correo electrónico persuasivo usando el framework PAS (Problema, Agitación, Solución). Debe ser de menos de 150 palabras, sin un tono agresivo, y ofreciendo una demostración gratuita de 15 minutos en el llamado a la acción."
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        id: 3,
+                        titleEs: "Razonamiento e Investigación",
+                        titleAr: "الاستدلال المتقدم والبحث العميق",
+                        objectiveEs: "Convertirte en un director de investigación utilizando técnicas de análisis estructurado, debates de roles y validación de fuentes.",
+                        objectiveAr: "التحول إلى مدير بحث باستخدام تقنيات استدلال متقدمة وبحث بمصادر موثقة.",
+                        challengeEs: "Aplica la técnica de 'Debate de Roles' en Claude o ChatGPT para evaluar un dilema personal o laboral entre 3 expertos virtuales.",
+                        challengeAr: "طبق تقنية 'مناظرة الأدوار' في Claude أو ChatGPT لتقييم معضلة معينة بين 3 خبراء افتراضيين.",
+                        quiz: {
+                            question: "¿Para qué sirve añadir la frase 'Piensa paso a paso' en un prompt complejo?",
+                            options: [
+                                "Para que la IA responda más lentamente.",
+                                "Activa la técnica 'Chain of Thought', incrementando la precisión de razonamiento lógico y matemático significativamente.",
+                                "Obliga a la IA a buscar imágenes."
+                            ],
+                            correct: 1,
+                            feedbackEs: "¡Excelente! Dar tiempo y pasos lógicos al modelo reduce el sesgo cognitivo del token predictivo.",
+                            feedbackAr: "ممتاز! إعطاء وقت وخطوات منطقية للنموذج يقلل من الانحياز المعرفي للرموز التنبؤية."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: Técnicas de Razonamiento Estructurado",
+                                titleAr: "القسم الأول: تقنيات الاستدلال الهيكلي",
+                                bodyEs: `<p>Los LLMs procesan mejor los problemas cuando simulan procesos cognitivos avanzados. Las dos metodologías más potentes son:</p>
+                                         <ul class='list-disc pl-5 mt-2 space-y-1'>
+                                            <li><strong>Tree of Thoughts:</strong> Explorar múltiples soluciones ramificadas.</li>
+                                            <li><strong>Self-Consistency:</strong> Evaluar de forma cruzada 3 metodologías analíticas antes de definir el output.</li>
+                                         </ul>`,
+                                bodyAr: `<p>تتعامل النماذج اللغوية الكبيرة مع المشكلات بشكل أفضل عندما تحاكي عمليات معرفية متقدمة. أقوى منهجيتين هما:</p>
+                                         <ul class='list-disc pr-5 mt-2 space-y-1 text-right' dir='rtl'>
+                                            <li><strong>شجرة الأفكار:</strong> استكشاف حلول متعددة ومتفرعة.</li>
+                                            <li><strong>الاتساق الذاتي:</strong> تقييم متقاطع لـ 3 منهجيات تحليلية قبل تحديد المخرج النهائي.</li>
+                                         </ul>`,
+                            },
+                            {
+                                titleEs: "Sección 2: Ejemplo de Prompt de Investigación profunda",
+                                titleAr: "القسم الثاني: مثال على أمر بحث عميق",
+                                bodyEs: `<p>Este prompt te permite realizar búsquedas complejas con un filtrado analítico exhaustivo:</p>`,
+                                bodyAr: `<p>هذا الأمر يتيح لك إجراء أبحاث معقدة مع تصفية تحليلية شاملة:</p>`,
+                                prompts: [
+                                    {
+                                        content: `Simula un debate entre 3 expertos sobre si debo automatizar completamente mi servicio al cliente con IA:
+Experto 1 (CEO de startup tech): Defiende la automatización total
+Experto 2 (Director de CX): Defiende el toque humano
+Experto 3 (Consultor financiero): Analiza ROI y costos
+
+Cada experto da 3 argumentos. Luego, como moderador, sintetiza las mejores ideas de cada uno y dame una recomendación híbrida.`
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 4,
+                        titleEs: "IA Visual y Diseño",
+                        titleAr: "الذكاء الاصطناعي البصري والتصميم",
+                        objectiveEs: "Dominar la anatomía del prompt visual para generar fotografías, ilustraciones y diseños de producto de alto nivel.",
+                        objectiveAr: "إتقان تشريح الأمر البصري لإنشاء صور فوتوغرافية وتصاميم منتجات عالية المستوى.",
+                        challengeEs: "Diseña un prompt descriptivo de 7 partes para un producto ficticio en DALL-E 3 o Midjourney. Verifica la consistencia de los elementos.",
+                        challengeAr: "صمم أمراً وصفياً من 7 أجزاء لمنتج خيالي في DALL-E 3 أو Midjourney وتحقق من تناسق العناصر.",
+                        quiz: {
+                            question: "¿Qué parámetro de Midjourney permite mantener la consistencia estética de una persona?",
+                            options: [
+                                "El parámetro --style raw",
+                                "El parámetro --cref (Character Reference)",
+                                "El parámetro --chaos"
+                            ],
+                            correct: 1,
+                            feedbackEs: "¡Excelente! --cref mantiene rasgos físicos constantes a lo largo de varias generaciones.",
+                            feedbackAr: "رائع! معيار --cref يحافظ على ملامح الشخصية ثابتة عبر أجيال توليد مختلفة."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: Anatomía de un Prompt Visual",
+                                titleAr: "القسم الأول: تشريح الأمر البصري المثالي",
+                                bodyEs: `<p>Para crear imágenes con fotorrealismo extremo o estilos artísticos controlados, es vital definir parámetros de hardware de cámara, lentes e iluminación:</p>`,
+                                bodyAr: `<p>لإنشاء صور بواقعية شديدة أو أساليب فنية متحكم بها، من الضروري تحديد إعدادات الكاميرا والعدسات والإضاءة:</p>`,
+                                table: {
+                                    headers: ["Elemento / العنصر", "Propósito / الغرض", "Ejemplo de Parámetro / مثال"],
+                                    rows: [
+                                        ["<strong>Sujeto</strong>", "Qué aparece en primer plano", "'Un guerrero samurai moderno'"],
+                                        ["<strong>Iluminación</strong>", "Estilo de luces y sombras", "'Luz natural de ventana, tono dorado'"],
+                                        ["<strong>Cámara y Lente</strong>", "Estética fotográfica", "'Shot on Sony A7R IV, 85mm f/1.4 lens'"],
+                                        ["<strong>Estilo Artístico</strong>", "Dirección de arte", "'Fotografía cinematográfica editorial'"]
+                                    ]
+                                }
+                            },
+                            {
+                                titleEs: "Sección 2: Prompts de Fotografía Premium",
+                                titleAr: "القسم الثاني: أوامر تصوير استثنائية",
+                                bodyEs: `<p>Aplica este prompt en Midjourney o tu generador favorito para ver resultados profesionales:</p>`,
+                                bodyAr: `<p>طبق هذا الأمر في Midjourney أو مولدك المفضل لرؤية نتائج احترافية:</p>`,
+                                prompts: [
+                                    {
+                                        content: `Professional portrait photography of a 35-year-old female architect in her modern studio, wearing a white linen blazer, confident smile, soft natural window light from the left, shallow depth of field, blurred bookshelves in background, shot on Sony A7R IV with 85mm f/1.4 lens, editorial style for Vogue magazine, ultra detailed skin texture, 8k resolution --ar 16:9 --style raw`
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 5,
+                        titleEs: "Audio, Video y Voz",
+                        titleAr: "الصوت والفيديو والصوت البشري",
+                        objectiveEs: "Integrar flujos multimedia de clonación de voz, doblaje inteligente y generación de videos corporativos automatizados.",
+                        objectiveAr: "دمج تدفقات الوسائط المتعددة من استنساخ الصوت، الدبلجة الذكية، وتوليد الفيديوهات التأسيسية المؤتمتة.",
+                        challengeEs: "Escribe un micro-guion de 30 segundos con IA, léele un fragmento a ElevenLabs para clonar tu voz, y genera el audio automatizado.",
+                        challengeAr: "اكتب سيناريو قصير مدته 30 ثانية بالذكاء الاصطناعي، واقرأ جزءاً منه لـ ElevenLabs لاستنساخ صوتك وتوليد الصوت تلقائياً.",
+                        quiz: {
+                            question: "¿Qué herramienta es ideal para convertir podcasts o conferencias largas en micro-clips virales automatizados?",
+                            options: [
+                                "ElevenLabs",
+                                "Opus Clip",
+                                "Stable Diffusion"
+                            ],
+                            correct: 1,
+                            feedbackEs: "¡Exacto! Opus Clip utiliza IA para recortar y subtitular los mejores momentos de videos largos.",
+                            feedbackAr: "بالظبط! Opus Clip يستخدم الذكاء الاصطناعي لقص وترجمة أفضل اللقطات من الفيديوهات الطويلة."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: El Ecosistema de Producción Inteligente",
+                                titleAr: "القسم الأول: منظومة الإنتاج الذكية",
+                                bodyEs: `<p>El mercado de generación de video y audio ha alcanzado madurez corporativa. Hoy en día se pueden clonar y doblar contenidos en minutos con un realismo impecable:</p>
+                                         <ul class='list-disc pl-5 mt-2 space-y-1.5'>
+                                            <li><strong>ElevenLabs:</strong> Voces ultrarrealistas y clonación inmediata.</li>
+                                            <li><strong>HeyGen / Synthesia:</strong> Presentadores virtuales con sincronización de labios (lip sync).</li>
+                                            <li><strong>Runway Gen-3:</strong> Generación cinemática a través de textos.</li>
+                                         </ul>`,
+                                bodyAr: `<p>وصلت سوق توليد الفيديو والصوت إلى مرحلة من النضج المؤسسي. اليوم يمكنك استنساخ ودبلجة المحتوى في دقائق بواقعية لا تشوبها شائبة:</p>
+                                         <ul class='list-disc pr-5 mt-2 space-y-1.5 text-right' dir='rtl'>
+                                            <li><strong>ElevenLabs:</strong> أصوات واقعية جداً واستنساخ فوري.</li>
+                                            <li><strong>HeyGen / Synthesia:</strong> شخصيات افتراضية مع مزامنة الشفاه (lip sync).</li>
+                                            <li><strong>Runway Gen-3:</strong> توليد فيديوهات سينمائية عن طريق النصوص.</li>
+                                         </ul>`
+                            }
+                        ]
+                    },
+                    {
+                        id: 6,
+                        titleEs: "Análisis de Datos y Código",
+                        titleAr: "تحليل البيانات والبرمجة لغير المبرمجين",
+                        objectiveEs: "Utilizar el procesador analítico de código de la IA para auditar hojas de cálculo, automatizar archivos y formular macros dinámicas.",
+                        objectiveAr: "استخدام المعالج التحليلي للذكاء الاصطناعي لتدقيق جداول البيانات، أتمتة الملفات وصياغة الماكرو.",
+                        challengeEs: "Sube un archivo CSV de ejemplo a ChatGPT. Pídele que limpie datos duplicados y cree un reporte estadístico visual.",
+                        challengeAr: "ارفع ملف CSV تجريبي إلى ChatGPT واطلب منه تنظيف البيانات المكررة وإنشاء تقرير إحصائي بصري.",
+                        quiz: {
+                            question: "¿Cómo ejecuta ChatGPT tareas avanzadas como análisis de regresiones o cálculos en archivos Excel?",
+                            options: [
+                                "Buscando las respuestas en foros de internet en tiempo real.",
+                                "Escribiendo y ejecutando scripts de Python en un entorno cerrado ('Code Interpreter').",
+                                "Traduciendo las celdas directamente a texto plano."
+                            ],
+                            correct: 1,
+                            feedbackEs: "¡Exacto! El intérprete de código permite a la IA interactuar directamente con la programación.",
+                            feedbackAr: "صحيح! مفسر الأكواد يتيح للذكاء الاصطناعي التفاعل مباشرة مع البرمجة لحل المسائل."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: Limpieza Inteligente de Archivos",
+                                titleAr: "القسم الأول: التنظيف الذكي للملفات",
+                                bodyEs: `<p>La IA puede escribir scripts complejos para auditar bases de datos en segundos. Aquí tienes una fórmula común para validar formatos numéricos en Excel:</p>`,
+                                bodyAr: `<p>يمكن للذكاء الاصطناعي كتابة نصوص معقدة لتدقيق قواعد البيانات في ثوانٍ. إليك صيغة شائعة للتحقق من تنسيقات الأرقام في Excel:</p>`,
+                                prompts: [
+                                    {
+                                        content: `=SI(Y(LARGO(SUSTITUIR(SUSTITUIR(A2;" ";"");"-";""))=9;O(IZQUIERDA(SUSTITUIR(SUSTITUIR(A2;" ";"");"-";"");1)={"6";"7";"9"}));"Válido";"Inválido")`
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 7,
+                        titleEs: "Automatización y Agentes",
+                        titleAr: "الأتمتة والوكلاء الذكيون",
+                        objectiveEs: "Bocetar y construir integraciones automatizadas que conecten tus aplicaciones sin intervención humana.",
+                        objectiveAr: "تصميم وبناء تكاملات مؤتمتة تربط تطبيقاتك المختلفة دون تدخل بشري مستمر.",
+                        challengeEs: "Crea un boceto de flujo automatizado en Zapier que conecte un formulario entrante con el análisis inteligente de ChatGPT.",
+                        challengeAr: "أنشئ مخطط تدفق تلقائي في Zapier يربط نموذجاً وارداً بتحليل ذكي عبر ChatGPT.",
+                        quiz: {
+                            question: "¿Cuál es la principal diferencia entre una automatización tradicional y un 'Agente Autónomo' de IA?",
+                            options: [
+                                "La automatización tradicional sigue reglas fijas, mientras que un Agente puede tomar decisiones autónomas basadas en su rol y herramientas.",
+                                "Los agentes autónomos son únicamente de pago.",
+                                "No hay diferencias reales, son sinónimos."
+                            ],
+                            correct: 0,
+                            feedbackEs: "¡Absolutamente correcto! Los agentes son sistemas dinámicos con capacidad de decisión lógica.",
+                            feedbackAr: "صحيح تماماً! الوكلاء هم أنظمة ديناميكية تتمتع بقدرة اتخاذ قرارات منطقية مستقلة."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: n8n, Make y Zapier",
+                                titleAr: "القسم الأول: n8n، Make و Zapier",
+                                bodyEs: `<p>Al conectar APIs de modelos con plataformas 'no-code', puedes construir bots dedicados a optimizar tus procesos empresariales:</p>
+                                         <ul class='list-disc pl-5 mt-2 space-y-1'>
+                                            <li><strong>Zapier:</strong> Conexiones rápidas ideales para integraciones sencillas.</li>
+                                            <li><strong>Make:</strong> Ramificaciones condicionales lógicas complejas.</li>
+                                            <li><strong>n8n:</strong> Código abierto que maximiza la privacidad local de tus datos.</li>
+                                         </ul>`,
+                                bodyAr: `<p>عند ربط واجهات النماذج البرمجية بالمنصات التي لا تتطلب كوداً (No-Code)، يمكنك بناء أدوات مخصصة لأتمتة عملياتك التجارية:</p>
+                                         <ul class='list-disc pr-5 mt-2 space-y-1 text-right' dir='rtl'>
+                                            <li><strong>Zapier:</strong> اتصالات سريعة مثالية للتكاملات البسيطة.</li>
+                                            <li><strong>Make:</strong> تفرعات شرطية منطقية ومعقدة.</li>
+                                            <li><strong>n8n:</strong> مفتوح المصدر يضمن أقصى قدر من خصوصية البيانات المحلية.</li>
+                                         </ul>`
+                            }
+                        ]
+                    },
+                    {
+                        id: 8,
+                        titleEs: "IA en Negocios y Marketing",
+                        titleAr: "الذكاء الاصطناعي في الأعمال والتسويق",
+                        objectiveEs: "Diseñar estrategias persuasivas de venta, prospección personalizada e implementar un ecosistema corporativo unipersonal.",
+                        objectiveAr: "تصميم استراتيجيات بيع مقنعة، وجلب عملاء محتملين مخصص، وتطبيق منظومة عمل من شخص واحد.",
+                        challengeEs: "Diseña una secuencia de correo en frío (cold email) de prospección comercial utilizando el modelo AIDA enfocado en tu sector.",
+                        challengeAr: "صمم تسلسل بريد إلكتروني بارد لجلب عملاء تجاريين باستخدام نموذج AIDA مخصص لقطاعك.",
+                        quiz: {
+                            question: "¿Qué propone el framework de copywriting PAS?",
+                            options: [
+                                "Plan, Acción y Salida rápida de productos.",
+                                "Problema, Agitación (intensificación de consecuencias) y Solución oportuna.",
+                                "Promesa, Atracción y Sugerencia de compra."
+                            ],
+                            correct: 1,
+                            feedbackEs: "¡Estupendo! PAS es de las fórmulas persuasivas más potentes para empatizar con el dolor del cliente.",
+                            feedbackAr: "رائع! PAS هي واحدة من أقوى الصيغ الإقناعية للتعاطف مع نقاط ألم العميل وتقديم الحل."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: Estructuración Persuasiva (AIDA)",
+                                titleAr: "القسم الأول: الهيكلة الإقناعية (AIDA)",
+                                bodyEs: `<p>Cuando delegas la redacción a una IA, el uso de frameworks de venta predefinidos previene las respuestas de tono plano y robótico. Aquí tienes la instrucción ideal para el framework AIDA:</p>`,
+                                bodyAr: `<p>عند إسناد كتابة الإعلانات إلى الذكاء الاصطناعي، فإن استخدام أطر بيع محددة يمنع الردود الرتيبة أو ذات النبرة الآلية. إليك الأمر المثالي لإطار AIDA:</p>`,
+                                prompts: [
+                                    {
+                                        content: `Actúa como un copywriter experto en ventas online. Escribe una página de ventas para mi curso de 'Fotografía con iPhone' usando el framework AIDA. Organízalo en: Gancho (Atención), Beneficios (Interés), Pruebas (Deseo) y Llamado de urgencia (Acción).`
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 9,
+                        titleEs: "Ética, Seguridad y Limitaciones",
+                        titleAr: "الأخلاق والأمان والقيود",
+                        objectiveEs: "Conocer los marcos de propiedad intelectual, proteger la privacidad de datos corporativos y mitigar alucinaciones de forma proactiva.",
+                        objectiveAr: "معرفة أطر الملكية الفكرية، حماية خصوصية البيانات المؤسسية وتخفيف حدة الهلوسات بطرق استباقية.",
+                        challengeEs: "Toma un análisis genérico de IA y redacta un prompt de verificación de fuentes que requiera URLs reales. Audita las referencias resultantes.",
+                        challengeAr: "خذ تحليلاً عاماً واكتب أمراً للتحقق من المصادر يطلب روابط حقيقية. دقق في المراجع الناتجة.",
+                        quiz: {
+                            question: "¿Cuál de los siguientes grupos de datos NUNCA debe ser introducido en modelos de IA públicos?",
+                            options: [
+                                "Estadísticas de tendencias públicas del mercado.",
+                                "Nombres ficticios o variables de prueba anónimas.",
+                                "Claves de acceso, credenciales de servidores o secretos industriales patentados."
+                            ],
+                            correct: 2,
+                            feedbackEs: "¡Exacto! Toda información ingresada en plataformas públicas puede ser utilizada para el re-entrenamiento del modelo.",
+                            feedbackAr: "بالظبط! أي معلومات تُدخل في منصات عامة قد تستخدم لإعادة تدريب النموذج."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: Cómo Mitigar las Alucinaciones",
+                                titleAr: "القسم الأول: كيف نحد من الهلوسات",
+                                bodyEs: `<p>Las alucinaciones ocurren cuando el modelo prioriza la fluidez gramatical sobre los datos verídicos de su base relacional. Para evitarlo de forma rigurosa:</p>
+                                         <ul class='list-disc pl-5 mt-2 space-y-1'>
+                                            <li>Aplica restricciones drásticas de exclusión: 'Si no sabes algo, responde con la frase exacta: No tengo datos verificados'.</li>
+                                            <li>Usa plataformas con acceso nativo a internet como Perplexity AI.</li>
+                                         </ul>`,
+                                bodyAr: `<p>تحدث الهلوسة عندما يعطي النموذج الأولوية للسلاسة اللغوية على حساب الحقائق الفعلية في قاعدة بياناته. للحد من ذلك بصرامة:</p>
+                                         <ul class='list-disc pr-5 mt-2 space-y-1 text-right' dir='rtl'>
+                                            <li>طبق قيوداً استبعادية صارمة: 'إذا لم تكن متأكداً، أجب بالعبارة التالية: لا أملك بيانات موثقة'.</li>
+                                            <li>استخدم منصات ذات وصول مباشر للإنترنت مثل Perplexity AI.</li>
+                                         </ul>`
+                            }
+                        ]
+                    },
+                    {
+                        id: 10,
+                        titleEs: "Tu Ecosistema de IA Personalizado",
+                        titleAr: "منظومتك المتكاملة للذكاء الاصطناعي",
+                        objectiveEs: "Consolidar todas las herramientas estudiadas en un flujo de trabajo unificado que maximice tu productividad diaria.",
+                        objectiveAr: "دمج جميع الأدوات المدروسة في تدفق عمل موحد يعزز إنتاجيتك اليومية والشخصية.",
+                        challengeEs: "Dibuja un diagrama o mapa mental de tu día laboral y destaca exactamente qué herramienta de IA (y qué prompt maestro) usarás para cada cuello de botella.",
+                        challengeAr: "ارسم خريطة ذهنية ليوم عملك وحدد بدقة أي أداة ذكاء اصطناعي (وأي أمر رئيسي) ستستخدمها للتغلب على العقبات.",
+                        quiz: {
+                            question: "¿Cuál es la mejor práctica para mantener un flujo de trabajo sostenible con IA a largo plazo?",
+                            options: [
+                                "Usar todas las herramientas nuevas que salgan al mercado diariamente.",
+                                "Crear un stack centralizado de 3 o 4 herramientas clave bien integradas con atajos y prompts guardados.",
+                                "Volver al trabajo manual y usar la IA de vez en cuando sin orden alguno."
+                            ],
+                            correct: 1,
+                            feedbackEs: "¡Brillante! El verdadero apalancamiento consiste en dominar unas pocas herramientas altamente efectivas en tu rutina.",
+                            feedbackAr: "رائع! الفائدة الحقيقية تكمن في إتقان عدد قليل من الأدوات عالية الفعالية ودمجها بذكاء."
+                        },
+                        sections: [
+                            {
+                                titleEs: "Sección 1: Construyendo tu Ecosistema Inteligente de Trabajo",
+                                titleAr: "القسم الأول: بناء بيئة عملك الذكية",
+                                bodyEs: `<p>Felicidades por llegar al Día 10. No necesitas suscribirte a 50 herramientas costosas. Un ecosistema ideal para un profesional promedio se compone de:</p>
+                                         <ul class='list-disc pl-5 mt-2 space-y-1.5'>
+                                            <li><strong>Anfitrión de Razonamiento:</strong> Claude (Redacción y Estrategia) o ChatGPT Plus (Análisis de datos).</li>
+                                            <li><strong>Buscador de Referencias:</strong> Perplexity AI (reemplazando búsquedas complejas de Google).</li>
+                                            <li><strong>Multimedia:</strong> Canva + Midjourney para creatividades visuales.</li>
+                                            <li><strong>Automatización:</strong> Integraciones básicas en Make/Zapier para automatizar tareas repetitivas.</li>
+                                         </ul>`,
+                                bodyAr: `<p>تهانينا لوصولك لليوم العاشر. لا تحتاج للاشتراك في 50 أداة مكلفة. منظومة العمل المثالية للمهني تتكون من:</p>
+                                         <ul class='list-disc pr-5 mt-2 space-y-1.5 text-right' dir='rtl'>
+                                            <li><strong>محرك الاستدلال:</strong> Claude (للكتابة والاستراتيجيات) أو ChatGPT Plus (لتحليل البيانات).</li>
+                                            <li><strong>محرك البحث الموثق:</strong> Perplexity AI (كبديل لعمليات البحث المعقدة في جوجل).</li>
+                                            <li><strong>الوسائط المتعددة:</strong> Canva + Midjourney للتصاميم البصرية والإبداعية.</li>
+                                            <li><strong>الأتمتة:</strong> تكاملات أساسية في Make أو Zapier لأتمتة المهام المتكررة اليومية.</li>
+                                         </ul>`
+                            }
+                        ]
+                    }
+                ]);
+
+                const glossary = ref([
+  { es: "LLM (Modelo de Lenguaje Grande)", ar: "نموذج لغوي كبير (LLM)", defEs: "Modelo entrenado con enormes cantidades de texto que predice la siguiente palabra más probable. Es la base de ChatGPT, Claude y Gemini.", defAr: "نموذج مدرَّب على كميات هائلة من النصوص يتوقع الكلمة التالية الأكثر احتمالاً، وهو أساس ChatGPT وClaude وGemini." },
+  { es: "Prompt", ar: "الأمر (Prompt)", defEs: "La instrucción que le das a la IA. Cuanto más claro y contextual, mejor la respuesta.", defAr: "التعليمة التي تعطيها للذكاء الاصطناعي. كلما كانت أوضح وأغنى بالسياق كانت الإجابة أفضل." },
+  { es: "Token", ar: "الرمز (Token)", defEs: "Fragmento de texto (una palabra o parte de ella) que el modelo procesa como unidad.", defAr: "جزء من النص (كلمة أو جزء منها) يعالجه النموذج كوحدة واحدة." },
+  { es: "Ventana de contexto", ar: "نافذة السياق", defEs: "Cantidad máxima de texto que el modelo puede tener en cuenta a la vez en una conversación.", defAr: "أقصى كمية من النص يستطيع النموذج أخذها في الاعتبار دفعة واحدة داخل المحادثة." },
+  { es: "Alucinación", ar: "الهلوسة", defEs: "Cuando la IA inventa datos, citas o fuentes con aparente seguridad. Se reduce pidiendo fuentes y verificando.", defAr: "عندما يختلق الذكاء الاصطناعي معلومات أو اقتباسات أو مصادر بثقة ظاهرة. تقل بطلب المصادر والتحقق منها." },
+  { es: "Chain of Thought (cadena de pensamiento)", ar: "سلسلة التفكير", defEs: "Técnica que pide a la IA razonar paso a paso antes de responder, mejorando problemas lógicos y de cálculo.", defAr: "تقنية تطلب من النموذج التفكير خطوة بخطوة قبل الإجابة، فتتحسن المسائل المنطقية والحسابية." },
+  { es: "Few-shot", ar: "التعلم بأمثلة قليلة (Few-shot)", defEs: "Dar a la IA uno o varios ejemplos de lo que quieres para que imite el estilo o formato.", defAr: "إعطاء النموذج مثالاً أو عدة أمثلة لما تريده ليحاكي الأسلوب أو التنسيق." },
+  { es: "Zero-shot", ar: "بدون أمثلة (Zero-shot)", defEs: "Pedir una tarea sin dar ningún ejemplo previo.", defAr: "طلب مهمة دون تقديم أي مثال مسبق." },
+  { es: "Prompt del sistema", ar: "أمر النظام", defEs: "Instrucciones fijas que definen el rol, tono y reglas de un asistente antes de que el usuario escriba.", defAr: "تعليمات ثابتة تحدد دور المساعد ونبرته وقواعده قبل أن يكتب المستخدم أي شيء." },
+  { es: "Custom GPT", ar: "مساعد مخصص (Custom GPT)", defEs: "Asistente de ChatGPT configurado con tus instrucciones y documentos para una tarea concreta.", defAr: "مساعد في ChatGPT مضبوط بتعليماتك ومستنداتك لمهمة محددة." },
+  { es: "Agente de IA", ar: "وكيل ذكاء اصطناعي", defEs: "Sistema que decide y ejecuta varios pasos por su cuenta usando herramientas para alcanzar un objetivo.", defAr: "نظام يقرر وينفذ عدة خطوات بنفسه مستخدماً أدوات لتحقيق هدف." },
+  { es: "Multimodal", ar: "متعدد الوسائط", defEs: "Modelo capaz de trabajar con varios tipos de datos: texto, imágenes, audio y video.", defAr: "نموذج قادر على التعامل مع أنواع متعددة من البيانات: نص وصور وصوت وفيديو." },
+  { es: "RAG (generación aumentada por recuperación)", ar: "التوليد المعزَّز بالاسترجاع (RAG)", defEs: "Método que busca información en tus documentos y se la pasa al modelo para que responda con datos reales.", defAr: "طريقة تبحث في مستنداتك وتمرر المعلومات للنموذج ليجيب ببيانات حقيقية." },
+  { es: "Fine-tuning (ajuste fino)", ar: "الضبط الدقيق (Fine-tuning)", defEs: "Reentrenar un modelo con tus propios datos para especializarlo en un estilo o tarea.", defAr: "إعادة تدريب نموذج ببياناتك الخاصة لتخصيصه في أسلوب أو مهمة معينة." },
+  { es: "Entrenamiento", ar: "التدريب", defEs: "Proceso en el que el modelo aprende patrones a partir de grandes conjuntos de datos.", defAr: "العملية التي يتعلم فيها النموذج الأنماط من مجموعات ضخمة من البيانات." },
+  { es: "Inferencia", ar: "الاستدلال/التشغيل (Inference)", defEs: "El momento en que un modelo ya entrenado genera una respuesta a tu prompt.", defAr: "اللحظة التي يولّد فيها النموذج المدرَّب إجابة عن أمرك." },
+  { es: "Temperatura", ar: "درجة الحرارة (Temperature)", defEs: "Parámetro que controla la creatividad: baja da respuestas más predecibles, alta más variadas.", defAr: "معامل يتحكم في الإبداع: المنخفض يعطي إجابات متوقعة والمرتفع إجابات أكثر تنوعاً." },
+  { es: "Embedding", ar: "التضمين (Embedding)", defEs: "Representación numérica del significado de un texto, usada para buscar contenido parecido.", defAr: "تمثيل رقمي لمعنى النص يُستخدم للبحث عن محتوى مشابه." },
+  { es: "API", ar: "واجهة برمجة التطبيقات (API)", defEs: "Conexión que permite a una aplicación usar un modelo de IA desde su propio código.", defAr: "قناة اتصال تتيح لتطبيق استخدام نموذج ذكاء اصطناعي من داخل برمجته." },
+  { es: "No-code", ar: "بدون كود (No-code)", defEs: "Herramientas como Zapier o Make que permiten automatizar sin programar.", defAr: "أدوات مثل Zapier وMake تتيح الأتمتة دون برمجة." },
+  { es: "Automatización", ar: "الأتمتة", defEs: "Flujo que ejecuta tareas repetitivas automáticamente cuando ocurre un evento (un disparador).", defAr: "سير عمل ينفذ مهاماً متكررة تلقائياً عند وقوع حدث معين (محفِّز)." },
+  { es: "Modelo de difusión", ar: "نموذج الانتشار (Diffusion)", defEs: "Tipo de modelo que genera imágenes partiendo de ruido y refinándolo; usado por Stable Diffusion y Midjourney.", defAr: "نوع من النماذج يولّد الصور بدءاً من ضوضاء ثم يصقلها، تستخدمه Stable Diffusion وMidjourney." },
+  { es: "Prompt negativo", ar: "الأمر السلبي", defEs: "Lista de elementos que no quieres en una imagen generada (por ejemplo, texto o marcas de agua).", defAr: "قائمة بالعناصر التي لا تريدها في الصورة المولَّدة (مثل النصوص أو العلامات المائية)." },
+  { es: "Clonación de voz", ar: "استنساخ الصوت", defEs: "Crear una voz sintética que imita la de una persona. Solo debe hacerse con su consentimiento.", defAr: "إنشاء صوت اصطناعي يحاكي صوت شخص ما. يجب ألا يتم إلا بموافقته." },
+  { es: "Lip sync", ar: "مزامنة الشفاه (Lip sync)", defEs: "Ajuste de los labios de un avatar o persona en video para que coincidan con un audio nuevo.", defAr: "مطابقة حركة شفاه الشخصية في الفيديو مع صوت جديد." },
+  { es: "Deepfake", ar: "التزييف العميق (Deepfake)", defEs: "Video o audio falso creado con IA que suplanta a una persona real. Su uso malicioso es ilegal y poco ético.", defAr: "فيديو أو صوت مزيّف يُنشأ بالذكاء الاصطناعي لانتحال شخصية حقيقية. استخدامه الضار غير قانوني وغير أخلاقي." },
+  { es: "Sesgo (bias)", ar: "التحيز (Bias)", defEs: "Tendencia injusta en las respuestas del modelo heredada de los datos con los que se entrenó.", defAr: "ميل غير عادل في إجابات النموذج موروث من البيانات التي دُرِّب عليها." },
+  { es: "Código abierto (open source)", ar: "مفتوح المصدر (Open source)", defEs: "Software cuyo código es público y modificable, como n8n o Stable Diffusion.", defAr: "برمجيات شفرتها المصدرية عامة وقابلة للتعديل، مثل n8n وStable Diffusion." },
+  { es: "Cold email", ar: "البريد البارد (Cold email)", defEs: "Primer correo comercial a alguien que aún no te conoce; la IA ayuda a personalizarlo.", defAr: "أول رسالة تجارية لشخص لا يعرفك بعد، ويساعد الذكاء الاصطناعي في تخصيصها." },
+  { es: "Lead scoring", ar: "تقييم العملاء المحتملين (Lead scoring)", defEs: "Sistema de puntos para priorizar clientes potenciales según presupuesto, urgencia y encaje.", defAr: "نظام نقاط لترتيب العملاء المحتملين حسب الميزانية والإلحاح والملاءمة." },
+  { es: "Framework AIDA / PAS", ar: "إطار AIDA / PAS", defEs: "Estructuras de copywriting: Atención-Interés-Deseo-Acción, y Problema-Agitación-Solución.", defAr: "هياكل لكتابة النصوص الإعلانية: الانتباه-الاهتمام-الرغبة-الإجراء، والمشكلة-التضخيم-الحل." },
+  { es: "Tree of Thoughts", ar: "شجرة الأفكار", defEs: "Técnica en la que la IA explora varias ramas de razonamiento y evalúa cada una antes de decidir.", defAr: "تقنية يستكشف فيها النموذج عدة مسارات استدلال ويقيّم كل واحد قبل اتخاذ القرار." },
+  { es: "Self-Consistency", ar: "الاتساق الذاتي", defEs: "Resolver un mismo problema de varias maneras y quedarse con la respuesta más consistente.", defAr: "حل المشكلة نفسها بعدة طرق واختيار الإجابة الأكثر اتساقاً." }
+]);
+
+const promptCats = [
+  { id: "prod", es: "Productividad", ar: "الإنتاجية" },
+  { id: "esc", es: "Escritura", ar: "الكتابة" },
+  { id: "mkt", es: "Marketing", ar: "التسويق" },
+  { id: "dev", es: "Programación", ar: "البرمجة" },
+  { id: "dat", es: "Datos", ar: "البيانات" },
+  { id: "est", es: "Estudio", ar: "الدراسة" },
+  { id: "neg", es: "Negocio", ar: "الأعمال" },
+  { id: "med", es: "Imagen y Video", ar: "الصورة والفيديو" },
+  { id: "inv", es: "Investigación", ar: "البحث" },
+  { id: "car", es: "Carrera", ar: "المسار المهني" }
+];
+
+const promptLibrary = ref([
+  { cat: "prod", es: "Plan semanal realista", ar: "خطة أسبوعية واقعية", content: "Actúa como un coach de productividad. Mis tareas de esta semana son: [LISTA]. Tengo [X] horas libres al día y mis horas de más energía son [HORARIO]. Organízalas en un plan de lunes a viernes en una tabla (Día, Bloque horario, Tarea, Duración). Deja 20% de margen para imprevistos." },
+  { cat: "prod", es: "Priorizar con la matriz Eisenhower", ar: "ترتيب الأولويات بمصفوفة أيزنهاور", content: "Clasifica estas tareas en la matriz de Eisenhower (urgente/importante): [LISTA]. Para cada una explica en una frase por qué la pones ahí y dime cuáles delegar o eliminar. Termina con las 3 que debo hacer hoy." },
+  { cat: "prod", es: "De reunión a acciones", ar: "من الاجتماع إلى المهام", content: "Te pego las notas de una reunión: [NOTAS]. Extrae: 1) decisiones tomadas, 2) tareas con responsable y fecha (si faltan, marca 'por definir'), 3) preguntas abiertas. Presenta todo en una tabla y un resumen de 3 líneas." },
+  { cat: "prod", es: "Responder un email difícil", ar: "الرد على بريد صعب", content: "Actúa como un comunicador profesional. Recibí este email: [EMAIL]. Quiero responder con firmeza pero con respeto, y lograr [OBJETIVO]. Dame 2 versiones (una breve de 80 palabras y otra más detallada) y explica en una línea qué prioriza cada una." },
+  { cat: "prod", es: "Revisión semanal", ar: "مراجعة أسبوعية", content: "Guíame en una revisión semanal de 15 minutos. Hazme una pregunta cada vez sobre: logros, obstáculos, aprendizajes y prioridades de la próxima semana. Al final resume mis respuestas en 5 viñetas y propón un único objetivo principal." },
+
+  { cat: "esc", es: "Cambiar el tono de un texto", ar: "تغيير نبرة النص", content: "Reescribe el siguiente texto con un tono [FORMAL / CERCANO / PERSUASIVO] manteniendo todos los datos: [TEXTO]. No añadas información nueva. Después marca en una lista breve los cambios principales que hiciste." },
+  { cat: "esc", es: "Resumen ejecutivo", ar: "ملخص تنفيذي", content: "Resume este documento en un resumen ejecutivo de máximo 200 palabras para un directivo con poco tiempo: [TEXTO]. Incluye: contexto, hallazgos clave, riesgos y siguiente paso recomendado. Si falta información para alguno, indícalo." },
+  { cat: "esc", es: "Esquema de artículo", ar: "هيكل مقال", content: "Actúa como editor de contenidos. Crea el esquema de un artículo de 1.200 palabras sobre [TEMA] para [PÚBLICO]. Incluye 3 opciones de título, introducción con gancho, 4-5 secciones con puntos clave y una conclusión con llamada a la acción." },
+  { cat: "esc", es: "Explícamelo fácil", ar: "اشرحه ببساطة", content: "Explica [CONCEPTO COMPLEJO] como si tuviera 12 años, usando una analogía de la vida cotidiana. Luego dame la versión para un profesional del sector en un párrafo, y 3 errores comunes al entenderlo." },
+  { cat: "esc", es: "Crítico implacable", ar: "الناقد الصارم", content: "Actúa como un editor exigente. Revisa mi texto: [TEXTO]. Dime sus 5 mayores debilidades (claridad, estructura, argumentos, estilo, ritmo), con ejemplos concretos del texto y una propuesta de mejora para cada una. Sé directo." },
+
+  { cat: "mkt", es: "Ideas de posts para Instagram", ar: "أفكار منشورات إنستغرام", content: "Actúa como experto en copywriting para redes sociales. Mi negocio es [NEGOCIO] y mi público son [PÚBLICO]. Dame 5 ideas de posts: para cada una el texto (máx. 120 palabras), 5 hashtags y una sugerencia de imagen. Evita clichés y el exceso de emojis." },
+  { cat: "mkt", es: "Email de ventas con PAS", ar: "بريد مبيعات بإطار PAS", content: "Escribe un email de ventas con el framework PAS para [PRODUCTO] dirigido a [PÚBLICO]. Problema: describe el dolor concreto. Agitación: sus consecuencias. Solución: cómo ayuda mi producto. Incluye 3 asuntos posibles, cuerpo de 250 palabras y un P.D. con la oferta." },
+  { cat: "mkt", es: "Página de ventas con AIDA", ar: "صفحة بيع بإطار AIDA", content: "Escribe una página de ventas para [CURSO/PRODUCTO] con el framework AIDA: gancho inicial, 3 beneficios con datos concretos, prueba o garantía, y llamada a la acción con urgencia honesta. Tono cercano y profesional, 700 palabras, con 3 variantes de titular." },
+  { cat: "mkt", es: "Calendario editorial de 30 días", ar: "تقويم تحريري لـ30 يوماً", content: "Crea un calendario editorial de 30 días para [MARCA] en [REDES]. Tabla con columnas: Día, Formato, Tema, Gancho, Llamada a la acción. Mezcla contenido educativo (50%), de autoridad (30%) y de venta (20%)." },
+  { cat: "mkt", es: "Análisis de competencia", ar: "تحليل المنافسين", content: "Analiza a estos competidores: [LISTA]. Para cada uno resume propuesta de valor, precios, canales y 2 debilidades que puedo aprovechar. Termina con una matriz FODA comparativa y 3 recomendaciones. Si no tienes datos fiables, dilo y no los inventes." },
+
+  { cat: "dev", es: "Explicar código línea a línea", ar: "شرح الكود سطراً بسطر", content: "Explica este código a alguien que no programa, línea por línea y en lenguaje sencillo: [CÓDIGO]. Al final resume en 3 frases qué hace en conjunto y señala cualquier riesgo o mala práctica." },
+  { cat: "dev", es: "Depurar un error", ar: "تصحيح خطأ برمجي", content: "Tengo este error: [MENSAJE DE ERROR]. Este es el código relacionado: [CÓDIGO]. Piensa paso a paso: explica la causa más probable, propón la corrección y dime cómo comprobar que quedó resuelto. Si hay varias causas posibles, ordénalas por probabilidad." },
+  { cat: "dev", es: "Script de Python para automatizar", ar: "سكربت بايثون للأتمتة", content: "Escribe un script de Python que [TAREA]. Requisitos: comentarios en español, manejo de errores, un log de lo que hace y variables de entorno para credenciales. Incluye instrucciones de instalación y un ejemplo de uso." },
+  { cat: "dev", es: "Revisión de código", ar: "مراجعة الكود", content: "Actúa como desarrollador senior revisando un pull request. Revisa este código: [CÓDIGO]. Señala errores, problemas de seguridad, legibilidad y rendimiento, ordenados por gravedad, con una corrección sugerida para cada uno." },
+  { cat: "dev", es: "Fórmula de Excel explicada", ar: "صيغة إكسل مع الشرح", content: "Necesito una fórmula de Excel que [OBJETIVO]. Mis columnas son: [DESCRIPCIÓN]. Dame la fórmula, explica cada parte en lenguaje sencillo y un ejemplo con 3 filas de datos y el resultado esperado." },
+
+  { cat: "dat", es: "Análisis exploratorio de un CSV", ar: "تحليل استكشافي لملف CSV", content: "Te adjunto un CSV de [DESCRIPCIÓN]. Haz un análisis exploratorio: columnas y tipos, valores nulos y duplicados, estadísticos principales, valores atípicos y 5 hallazgos relevantes. Propón 3 gráficos que los muestren mejor." },
+  { cat: "dat", es: "Limpieza de datos", ar: "تنظيف البيانات", content: "Limpia este archivo: elimina duplicados, unifica el formato de fechas a DD/MM/AAAA, normaliza textos (mayúsculas y espacios) y señala los campos vacíos sin inventar valores. Entrégame el archivo limpio y una lista de todos los cambios aplicados." },
+  { cat: "dat", es: "Panel de KPIs", ar: "لوحة المؤشرات", content: "A partir de estos datos de ventas: [DATOS], calcula los KPIs clave (ingresos, ticket medio, crecimiento mensual, mejor y peor categoría) y preséntalos en una tabla. Añade 3 recomendaciones accionables basadas solo en los datos." },
+  { cat: "dat", es: "Sentimiento de una encuesta", ar: "مشاعر الاستبيان", content: "Analiza estos comentarios de clientes: [COMENTARIOS]. Clasifica cada uno como positivo, neutro o negativo, agrupa los temas más mencionados en los negativos y resume en 5 puntos qué debería mejorar la empresa primero." },
+  { cat: "dat", es: "Qué dice este gráfico", ar: "ماذا يقول هذا الرسم", content: "Interpreta esta tabla/gráfico: [DATOS]. Explica la tendencia principal, qué cambios son significativos y cuáles pueden ser ruido, y qué preguntas debería hacerme antes de tomar una decisión con estos números." },
+
+  { cat: "est", es: "Plan de estudio de 4 semanas", ar: "خطة دراسة لأربعة أسابيع", content: "Actúa como un tutor experto. Quiero aprender [TEMA] en 4 semanas, con [X] horas por semana y nivel actual [NIVEL]. Crea un plan semanal con objetivos, recursos gratuitos, ejercicios prácticos y un mini proyecto final." },
+  { cat: "est", es: "Tutor socrático", ar: "المعلم السقراطي", content: "Quiero entender [CONCEPTO]. No me des la respuesta directa: hazme preguntas una a una para guiarme, corrige mis errores con pistas y, cuando lo haya entendido, pídeme que lo explique con mis palabras." },
+  { cat: "est", es: "Tarjetas de repaso", ar: "بطاقات المراجعة", content: "A partir de este material: [TEXTO]. Crea 20 tarjetas de pregunta-respuesta (flashcards) ordenadas de lo básico a lo avanzado. Formato tabla con columnas Pregunta | Respuesta. Evita preguntas ambiguas." },
+  { cat: "est", es: "Examen de práctica", ar: "اختبار تدريبي", content: "Crea un examen de práctica de 10 preguntas sobre [TEMA] (7 de opción múltiple y 3 de desarrollo). Espera mis respuestas antes de dar las soluciones; luego corrígeme, explica mis fallos y dime qué debo repasar." },
+  { cat: "est", es: "Aprender con analogías", ar: "التعلم بالتشبيهات", content: "Explícame [CONCEPTO] con 3 analogías distintas (una de cocina, una de deporte y una de tecnología). Después indica en qué punto cada analogía deja de ser exacta para que no me lleve a malentendidos." },
+
+  { cat: "neg", es: "Validar una idea de negocio", ar: "اختبار فكرة مشروع", content: "Actúa como inversor escéptico. Mi idea: [IDEA] para [CLIENTE]. Evalúa: problema real, tamaño del mercado, alternativas existentes, riesgos principales y la prueba más barata para validarla en 2 semanas. Sé crítico y no me des la razón por defecto." },
+  { cat: "neg", es: "Plan de negocio en una página", ar: "خطة عمل في صفحة", content: "Crea un plan de negocio lean de una página para [NEGOCIO]: propuesta de valor, cliente, canales, fuentes de ingresos, costes principales, métricas clave y 3 riesgos con su mitigación. Presenta en una tabla." },
+  { cat: "neg", es: "Estrategia de precios", ar: "استراتيجية التسعير", content: "Ayúdame a fijar el precio de [PRODUCTO/CURSO]. Analízalo de 3 formas: competencia, valor percibido y costes con margen objetivo de [X]%. Compara las conclusiones y dame un rango recomendado con una prueba A/B para validarlo." },
+  { cat: "neg", es: "Sistema de puntuación de leads", ar: "نظام تقييم العملاء", content: "Diseña un sistema de lead scoring para mi negocio de [SECTOR]: criterios (presupuesto, urgencia, tamaño, encaje), puntuación de 0 a 10 por criterio, umbrales frío/tibio/caliente, acción para cada nivel y 5 preguntas para calificar en la primera llamada." },
+  { cat: "neg", es: "Debate de tres expertos", ar: "مناظرة ثلاثة خبراء", content: "Simula un debate entre 3 expertos sobre [DECISIÓN]: uno a favor, uno en contra y un analista financiero. Cada uno da 3 argumentos. Como moderador, sintetiza lo mejor de cada postura y dame una recomendación con los riesgos que debo vigilar." },
+
+  { cat: "med", es: "Retrato fotorrealista", ar: "بورتريه واقعي", content: "Professional portrait photography of [PERSONA/PROFESIÓN] in [ENTORNO], soft natural window light from the left, shallow depth of field, shot on 85mm f/1.4 lens, editorial style, detailed skin texture --ar 3:4 --style raw" },
+  { cat: "med", es: "Foto de producto minimalista", ar: "صورة منتج بسيطة", content: "Minimalist product photography of [PRODUCTO], [MATERIAL/COLOR] finish, floating on a pure white background, soft studio lighting, subtle shadow, commercial advertising style, ultra sharp details --ar 4:5" },
+  { cat: "med", es: "Ilustración de fantasía", ar: "رسم خيالي", content: "Fantasy illustration of [ESCENA], glowing details, ethereal atmosphere, rich vibrant colors, dreamlike quality, intricate details, digital painting, original characters and design --ar 16:9" },
+  { cat: "med", es: "Guion de video de 60 segundos", ar: "سيناريو فيديو 60 ثانية", content: "Actúa como guionista de video corto. Escribe un guion de 60 segundos sobre [TEMA] para [PLATAFORMA]: gancho en los primeros 3 segundos, 3 ideas con ejemplo, cierre con llamada a la acción. Tabla con columnas: Tiempo, Imagen, Locución." },
+  { cat: "med", es: "Plano de cámara para Runway", ar: "لقطة كاميرا لـ Runway", content: "Smooth tracking shot of [SUJETO] on [SUPERFICIE], slow motion, soft studio lighting with golden rim light, camera slowly orbiting 180 degrees, cinematic color grading, commercial style, 4K" },
+
+  { cat: "inv", es: "Revisión de literatura", ar: "مراجعة الأدبيات", content: "Revisa la literatura académica sobre [TEMA] de los últimos 5 años. Identifica teorías principales, metodologías, vacíos de investigación y direcciones futuras. Cita solo fuentes reales con enlace y, si no puedes verificarlas, indícalo." },
+  { cat: "inv", es: "Antídoto contra alucinaciones", ar: "مضاد الهلوسة", content: "Dame información sobre [TEMA]. Para cada dato importante: cita la fuente con URL verificable, indica su fecha y separa hechos de opiniones. Si no estás seguro de algo, dilo. No inventes: si no lo sabes, responde 'No tengo información verificable sobre esto'." },
+  { cat: "inv", es: "Árbol de pensamientos", ar: "شجرة الأفكار", content: "Tengo que decidir entre estas opciones: [A, B, C]. Para cada una desarrolla un árbol de escenarios (optimista, realista, pesimista) con riesgos y oportunidades, puntúa cada rama de 1 a 10 y recomienda la mejor opción justificando la elección." },
+  { cat: "inv", es: "Resolver de tres formas", ar: "الحل بثلاث طرق", content: "Resuelve este problema de 3 maneras independientes: [PROBLEMA]. Muestra el razonamiento paso a paso de cada una, compara los resultados y, si difieren, explica por qué. Termina con la respuesta más consistente y tu nivel de confianza." },
+  { cat: "inv", es: "Investigación de mercado", ar: "بحث السوق", content: "Investiga el mercado de [PRODUCTO/SECTOR] en [PAÍS]: tamaño y crecimiento, 5 actores principales, tendencias, regulación y canales de distribución. Cita todas las fuentes con URL y señala claramente los datos que no encuentres." },
+
+  { cat: "car", es: "Optimizar mi CV", ar: "تحسين سيرتي الذاتية", content: "Actúa como reclutador senior. Aquí está mi CV: [CV] y esta oferta: [OFERTA]. Reescribe mi perfil y 5 logros con verbos de acción y resultados medibles, sin inventar datos. Indica qué palabras clave de la oferta faltan y qué quitaría." },
+  { cat: "car", es: "Entrevista simulada", ar: "مقابلة تجريبية", content: "Actúa como entrevistador para el puesto de [PUESTO] en [EMPRESA/SECTOR]. Hazme una pregunta cada vez (5 en total, mezcla de técnicas y de comportamiento). Tras cada respuesta, dame una nota del 1 al 10, qué estuvo bien y cómo mejorarla." },
+  { cat: "car", es: "Perfil de LinkedIn", ar: "ملف لينكدإن", content: "Mejora mi perfil de LinkedIn para [OBJETIVO PROFESIONAL]. Con estos datos: [EXPERIENCIA]. Dame 3 titulares, un extracto de 150 palabras en primera persona con tono cercano y 3 ideas de publicaciones para ganar visibilidad." },
+  { cat: "car", es: "Prepararme para negociar el salario", ar: "الاستعداد للتفاوض على الراتب", content: "Ayúdame a prepararme para negociar mi salario como [PUESTO]. Mi situación: [CONTEXTO]. Dame argumentos basados en mi valor, un guion para la conversación, respuestas a 3 objeciones típicas y alternativas si no hay aumento salarial." },
+  { cat: "car", es: "Aprender una habilidad en 30 días", ar: "تعلم مهارة في 30 يوماً", content: "Quiero aprender [HABILIDAD] en 30 días con [X] minutos al día. Crea un plan con objetivos semanales, práctica diaria, hitos de progreso y cómo medir si avanzo. Incluye qué hacer si me atasco o me falta tiempo." }
+]);
+
+days.value[8].sections.push(
+  {
+    titleEs: "Sección 2: Prompt de Verificación de Fuentes",
+    titleAr: "القسم الثاني: أمر التحقق من المصادر",
+    bodyEs: `<p>Un buen hábito es pedir siempre fuentes verificables y exigir honestidad sobre lo que la IA no sabe. Usa este prompt como plantilla:</p>`,
+    bodyAr: `<p>عادة جيدة أن تطلب دائماً مصادر يمكن التحقق منها وأن تشترط الصدق بشأن ما لا يعرفه النموذج. استخدم هذا الأمر كقالب:</p>`,
+    prompts: [
+      { content: `Dame información sobre [TEMA]. Para cada dato importante:
+1. Cita la fuente con URL verificable
+2. Indica la fecha de la fuente
+3. Si no estás seguro de algo, dilo explícitamente
+4. Distingue entre hechos verificables y opiniones
+
+NO inventes información. Si no sabes algo, di 'No tengo información verificable sobre esto'.` }
+    ]
+  },
+  {
+    titleEs: "Sección 3: Privacidad y Seguridad de Datos",
+    titleAr: "القسم الثالث: الخصوصية وأمان البيانات",
+    bodyEs: `<p>Lo que escribes en una IA pública puede usarse para entrenar modelos futuros. Antes de pegar nada, pregúntate si lo compartirías en un foro abierto.</p>`,
+    bodyAr: `<p>ما تكتبه في نموذج ذكاء اصطناعي عام قد يُستخدم لتدريب نماذج مستقبلية. قبل أن تلصق أي شيء، اسأل نفسك: هل كنت ستنشره في منتدى مفتوح؟</p>`,
+    table: {
+      headers: ["❌ No compartir / لا تشارك", "✅ Sí compartir / شارك"],
+      rows: [
+        ["Contraseñas y claves de acceso / كلمات المرور", "Datos anonimizados / بيانات مجهولة الهوية"],
+        ["Tarjetas y datos bancarios / بيانات البطاقات والبنوك", "Escenarios hipotéticos / سيناريوهات افتراضية"],
+        ["Información médica personal / معلومات طبية شخصية", "Ejemplos ficticios / أمثلة خيالية"],
+        ["Datos de clientes reales / بيانات عملاء حقيقيين", "Casos de estudio anonimizados / حالات دراسية مجهولة"],
+        ["Secretos comerciales y código propietario / أسرار تجارية وكود خاص", "Estrategias genéricas y fragmentos genéricos / استراتيجيات عامة وأجزاء عامة"]
+      ]
+    }
+  },
+  {
+    titleEs: "Sección 4: Derechos de Autor y Ética",
+    titleAr: "القسم الرابع: حقوق النشر والأخلاقيات",
+    bodyEs: `<p>El marco legal de la IA generativa cambia rápido y varía según el país. Estas pautas te ayudan a usarla con criterio (no sustituyen el consejo de un abogado):</p>
+             <ul class='list-disc pl-5 mt-2 space-y-1'>
+                <li><strong>Documenta tu proceso:</strong> guarda prompts y versiones intermedias.</li>
+                <li><strong>Añade valor humano:</strong> edita y mejora lo que genera la IA.</li>
+                <li><strong>Sé transparente:</strong> indica el uso de IA cuando sea relevante.</li>
+                <li><strong>Respeta licencias y marcas:</strong> no copies el estilo de artistas vivos sin permiso.</li>
+                <li><strong>Tú eres responsable</strong> de lo que publiques, lo haya escrito la IA o no.</li>
+             </ul>
+             <p class='mt-3'><strong>Usos no éticos:</strong> deepfakes maliciosos, desinformación, suplantación de identidad y manipulación emocional de personas vulnerables.</p>`,
+    bodyAr: `<p>يتغير الإطار القانوني للذكاء الاصطناعي التوليدي بسرعة ويختلف من بلد لآخر. تساعدك هذه الإرشادات على الاستخدام الواعي (ولا تغني عن استشارة محامٍ):</p>
+             <ul class='list-disc pr-5 mt-2 space-y-1 text-right' dir='rtl'>
+                <li><strong>وثّق عمليتك:</strong> احفظ الأوامر والنسخ الوسيطة.</li>
+                <li><strong>أضف قيمة بشرية:</strong> عدّل وحسّن ما يولّده الذكاء الاصطناعي.</li>
+                <li><strong>كن شفافاً:</strong> اذكر استخدام الذكاء الاصطناعي عندما يكون ذلك مهماً.</li>
+                <li><strong>احترم التراخيص والعلامات التجارية:</strong> لا تنسخ أسلوب فنانين أحياء دون إذن.</li>
+                <li><strong>أنت المسؤول</strong> عما تنشره، سواء كتبه الذكاء الاصطناعي أم لا.</li>
+             </ul>
+             <p class='mt-3'><strong>الاستخدامات غير الأخلاقية:</strong> التزييف العميق الضار، والتضليل، وانتحال الهوية، والتلاعب العاطفي بالأشخاص الضعفاء.</p>`
+  }
+);
+
+const norm = (t) => String(t || '').toLowerCase();
+const filteredGlossary = computed(() => {
+    const q = norm(glossQuery.value).trim();
+    return glossary.value.filter(g => !q || norm(g.es + ' ' + g.ar + ' ' + g.defEs + ' ' + g.defAr).includes(q));
+});
+const filteredPrompts = computed(() => {
+    const q = norm(promptQuery.value).trim();
+    return promptLibrary.value.filter(x => (promptCat.value === 'all' || x.cat === promptCat.value)
+        && (!q || norm(x.es + ' ' + x.ar + ' ' + x.content).includes(q)));
+});
+const catName = (id) => { const c = promptCats.find(c => c.id === id); return c ? c : { es: id, ar: id }; };
+watch(view, () => { window.scrollTo(0, 0); });
+
+// Current day data object helper
+                const currentDay = computed(() => {
+                    return days.value.find(d => d.id === activeDay.value) || days.value[0];
+                });
+
+                // Quiz Assessment Helpers & Computes
+                const quizFeedback = computed(() => {
+                    if (!quizSubmitted.value) return '';
+                    return selectedAnswer.value === currentDay.value.quiz.correct 
+                        ? currentDay.value.quiz.feedbackEs 
+                        : 'Respuesta incorrecta. ¡Vuelve a repasar el material!';
+                });
+
+                const selectAnswer = (index) => {
+                    if (quizSubmitted.value) return;
+                    selectedAnswer.value = index;
+                };
+
+                const submitQuiz = () => {
+                    quizSubmitted.value = true;
+                    // Auto-mark day completed if answered correctly
+                    if (selectedAnswer.value === currentDay.value.quiz.correct) {
+                        if (!completedDays.value.includes(currentDay.value.id)) {
+                            completedDays.value.push(currentDay.value.id);
+                            saveToLocalStorage();
+                        }
+                    }
+                };
+
+                // Watchers to reset quiz states on day switches
+                watch(activeDay, () => {
+                    selectedAnswer.value = null;
+                    quizSubmitted.value = false;
+                });
+
+                // Dynamic Progress Math
+                const progressPercentage = computed(() => {
+                    return Math.round((completedDays.value.length / days.value.length) * 100);
+                });
+
+                const toggleDayCompleted = (id) => {
+                    if (completedDays.value.includes(id)) {
+                        completedDays.value = completedDays.value.filter(item => item !== id);
+                    } else {
+                        completedDays.value.push(id);
+                    }
+                    saveToLocalStorage();
+                };
+
+                const goToDay = (num) => {
+                    if (num >= 1 && num <= days.value.length) {
+                        activeDay.value = num;
+                        view.value = 'course';
+                    }
+                };
+
+                // Prompt Builder computed generation logic
+                const compiledPrompt = computed(() => {
+                    let rol = builder.value.rol || "[Establece un Rol experto]";
+                    let contexto = builder.value.contexto || "[Añade el contexto de tu negocio/vida]";
+                    let tarea = builder.value.tarea || "[Describe la tarea principal de forma clara]";
+                    let formato = builder.value.formato || "[Especifica el formato de salida: Tabla, JSON, etc.]";
+                    let restricciones = builder.value.restricciones || "[Detalla los límites y lo que la IA debe evitar]";
+
+                    return `Actúa como ${rol}. 
+
+CONTEXTO: 
+${contexto}
+
+TAREA PRINCIPAL:
+${tarea}
+
+FORMATO DE ENTREGA:
+${formato}
+
+RESTRICCIONES Y LÍMITES:
+${restricciones}`;
+                });
+
+                // Global clipboard helper
+                const toast = (msg) => {
+                    const t = document.createElement('div');
+                    t.textContent = msg;
+                    t.style.cssText = 'position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:9999;background:#111827;color:#f1f5f9;border:1px solid #8b5cf6;border-radius:12px;padding:10px 16px;font-size:12px;box-shadow:0 10px 30px rgba(0,0,0,.5);max-width:90vw;text-align:center';
+                    document.body.appendChild(t);
+                    setTimeout(() => t.remove(), 2200);
+                };
+                const copyText = (text) => {
+                    try {
+                        navigator.clipboard.writeText(text).then(
+                            () => toast('¡Copiado! / تم النسخ'),
+                            () => toast('No se pudo copiar. Selecciona el texto manualmente.')
+                        );
+                    } catch (err) {
+                        toast('No se pudo copiar. Selecciona el texto manualmente.');
+                    }
+                };
+
+                // Browser Persistent State
+                const saveToLocalStorage = () => {
+                    try { localStorage.setItem('learnAI_progress', JSON.stringify(completedDays.value)); } catch (e) {}
+                };
+
+                onMounted(() => {
+                    try {
+                        const saved = localStorage.getItem('learnAI_progress');
+                        if (saved) { completedDays.value = JSON.parse(saved); }
+                    } catch (e) {}
+                });
+
+                // 3D calm-mode class binding
+                watch(p3Calm, (v) => {
+                    document.body.classList.toggle('p3-calm', v);
+                    document.querySelector('#p3-stars').style.display = v ? 'none' : 'block';
+                });
+
+                return {
+                    days,
+                    activeDay,
+                    currentDay,
+                    langMode,
+                    completedDays,
+                    progressPercentage,
+                    selectedAnswer,
+                    quizSubmitted,
+                    quizFeedback,
+                    showPromptBuilder,
+                    p3Calm,
+                    builder,
+                    compiledPrompt,
+                    selectAnswer,
+                    submitQuiz,
+                    toggleDayCompleted,
+                    goToDay,
+                    copyText,
+                    view, glossQuery, promptQuery, promptCat, glossary, promptLibrary, promptCats,
+                    filteredGlossary, filteredPrompts, catName
+                };
+            }
+        }).mount('#app');
+    </script>
+
+    <!-- ================================================================
+         3D ENGINE · depth starfield · pointer tilt · scroll parallax
+         ================================================================ -->
+    <script>
+    (function () {
+        'use strict';
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const fine    = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+        /* ---------- 1. DEPTH STARFIELD (neural constellation) ---------- */
+        const cv = document.getElementById('p3-stars');
+        const cx = cv.getContext('2d');
+        let W = 0, H = 0, stars = [];
+
+        function resize() {
+            W = cv.width  = Math.floor(window.innerWidth);
+            H = cv.height = Math.floor(window.innerHeight);
+            build();
+        }
+        function build() {
+            const n = Math.min(120, Math.max(46, Math.round(W * H / 15000)));
+            stars = [];
+            for (let i = 0; i < n; i++) {
+                stars.push({
+                    x: (Math.random() - 0.5) * W * 1.7,
+                    y: (Math.random() - 0.5) * H * 1.7,
+                    z: Math.random() * 1500,
+                    r: 0.5 + Math.random() * 1.5,
+                    p: Math.random() * Math.PI * 2,
+                    c: Math.random() < 0.5 ? '139,92,246' : '6,182,212'
+                });
+            }
+        }
+        function frame() {
+            cx.clearRect(0, 0, W, H);
+            const pts = [];
+            for (let i = 0; i < stars.length; i++) {
+                const s = stars[i];
+                s.z -= 1.7;
+                if (s.z <= 1) { s.z = 1500; s.x = (Math.random() - 0.5) * W * 1.7; s.y = (Math.random() - 0.5) * H * 1.7; }
+                const k = 140 / s.z;
+                const x = s.x * k + W / 2;
+                const y = s.y * k + H / 2;
+                if (x < -40 || x > W + 40 || y < -40 || y > H + 40) continue;
+                const tw = 0.55 + 0.45 * Math.sin(s.p + s.z * 0.006);
+                const sz = Math.max(0.35, s.r * k * 1.5);
+                cx.beginPath();
+                cx.arc(x, y, sz, 0, 6.2832);
+                cx.fillStyle = 'rgba(' + s.c + ',' + (0.30 * tw + 0.12).toFixed(3) + ')';
+                cx.fill();
+                pts.push([x, y, 140 / s.z]);
+            }
+            /* neural links */
+            cx.lineWidth = 0.6;
+            for (let i = 0; i < pts.length; i++) {
+                for (let j = i + 1; j < pts.length; j++) {
+                    const dx = pts[i][0] - pts[j][0], dy = pts[i][1] - pts[j][1];
+                    const d2 = dx * dx + dy * dy;
+                    if (d2 < 15000) {
+                        const a = (1 - d2 / 15000) * 0.16;
+                        cx.beginPath();
+                        cx.moveTo(pts[i][0], pts[i][1]);
+                        cx.lineTo(pts[j][0], pts[j][1]);
+                        cx.strokeStyle = 'rgba(139,92,246,' + a.toFixed(3) + ')';
+                        cx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(frame);
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        if (!reduced) frame();
+
+        /* ---------- 2. POINTER TILT ENGINE ---------- */
+        if (fine && !reduced) {
+            let raf = null, pending = null, active = null;
+
+            function apply(card, e) {
+                const r = card.getBoundingClientRect();
+                const px = (e.clientX - r.left) / r.width;
+                const py = (e.clientY - r.top) / r.height;
+                card.style.setProperty('--p3-mx', (px * 100).toFixed(1) + '%');
+                card.style.setProperty('--p3-my', (py * 100).toFixed(1) + '%');
+                card.style.setProperty('--p3-tilt',   ((px - 0.5) * 12).toFixed(2) + 'deg');
+                card.style.setProperty('--p3-tiltx',  ((0.5 - py) * 9).toFixed(2) + 'deg');
+            }
+            function reset(card) {
+                card.style.setProperty('--p3-tilt', '0deg');
+                card.style.setProperty('--p3-tiltx', '0deg');
+            }
+            function loop() {
+                if (pending) { apply(pending.el, pending.e); pending = null; raf = null; }
+            }
+            document.addEventListener('pointermove', function (e) {
+                const el = e.target.closest ? e.target.closest('[data-tilt]') : null;
+                if (el !== active) { if (active) reset(active); active = el; }
+                if (!el) return;
+                pending = { el: el, e: { clientX: e.clientX, clientY: e.clientY } };
+                if (!raf) raf = requestAnimationFrame(loop);
+            }, { passive: true });
+            document.addEventListener('pointerout', function (e) {
+                const el = e.target.closest ? e.target.closest('[data-tilt]') : null;
+                if (!el) return;
+                if (e.relatedTarget && el.contains(e.relatedTarget)) return;
+                reset(el);
+                if (active === el) active = null;
+            }, { passive: true });
+        }
+
+        /* ---------- 3. SCROLL PARALLAX ON STAGE LAYERS ---------- */
+        if (!reduced) {
+            const orbs = document.querySelectorAll('.p3-orb');
+            const cubes = document.querySelectorAll('.p3-cube-wrap');
+            let t = null;
+            function applyParallax() {
+                const y = window.pageYOffset || document.documentElement.scrollTop || 0;
+                for (let i = 0; i < orbs.length; i++) {
+                    orbs[i].style.setProperty('translate', '0 ' + (y * (0.05 + i * 0.025)).toFixed(1) + 'px');
+                }
+                for (let i = 0; i < cubes.length; i++) {
+                    cubes[i].style.setProperty('translate', '0 ' + (y * (0.10 + i * 0.04)).toFixed(1) + 'px');
+                }
+            }
+            window.addEventListener('scroll', function () {
+                if (!t) t = requestAnimationFrame(function () { applyParallax(); t = null; });
+            }, { passive: true });
+        }
+    })();
+    </script>
+</div>
+
+</body></html>
